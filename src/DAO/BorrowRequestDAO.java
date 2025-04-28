@@ -1,0 +1,114 @@
+package DAO;
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import model.BorrowRequest;
+import util.DBConnection;
+
+
+public class BorrowRequestDAO {
+    public boolean createBorrowRequest(BorrowRequest request) {
+        String sql = "INSERT INTO borrow_requests (user_id, book_id, request_date, status) VALUES (?, ?, ?, ?)";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, request.getUserId());
+            stmt.setInt(2, request.getBookId());
+            stmt.setDate(3, new java.sql.Date(request.getRequestDate().getTime()));
+            stmt.setString(4, request.getStatus());
+            return stmt.executeUpdate() > 0;
+        } catch (Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi!");
+        }
+        return false;
+    }
+
+    public ArrayList<BorrowRequest> BorrowRequests(){
+        ArrayList<BorrowRequest> list = new ArrayList<>();
+        String sql = "SELECT * FROM borrow_requests WHERE status = 'Đang chờ duyệt'";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                BorrowRequest br = new BorrowRequest();
+                br.setRequestId(rs.getInt("request_id"));
+                br.setUserId(rs.getInt("user_id"));
+                br.setBookId(rs.getInt("book_id"));
+                br.setRequestDate(rs.getDate("request_date"));
+                br.setStatus(rs.getString("status"));
+                list.add(br);
+            }
+        } catch(Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi!");
+        }
+        return list;
+    }
+
+    public BorrowRequest getBorrowRequestById(int requestId){
+        String sql = "SELECT * FROM borrow_requests WHERE request_id = ?";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, requestId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                BorrowRequest request = new BorrowRequest();
+                request.setRequestId(rs.getInt("request_id"));
+                request.setUserId(rs.getInt("user_id"));
+                request.setBookId(rs.getInt("book_id"));
+                request.setRequestDate(rs.getDate("request_date"));
+                request.setStatus(rs.getString("status"));
+                return request;
+            }
+        } catch (Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi!");
+        }
+        return null;
+    }
+
+    public ArrayList<BorrowRequest> getBorrowRequestByUserId(int userId){
+        ArrayList<BorrowRequest> requests = new ArrayList<>();
+        String sql = "SELECT * FROM borrow_requests WHERE user_id = ?";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                BorrowRequest request = new BorrowRequest();
+                request.setRequestId(rs.getInt("request_id"));
+                request.setUserId(rs.getInt("user_id"));
+                request.setBookId(rs.getInt("book_id"));
+                request.setRequestDate(rs.getDate("request_date"));
+                request.setStatus(rs.getString("status"));
+                requests.add(request);
+            }
+        } catch (Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi!");
+        }
+        return requests;
+    }
+
+    public boolean updateBorrowRequestStatus(int requestId, String status){
+        String sql = "UPDATE borrow_requests SET status = ? WHERE request_id = ?";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, status);
+            stmt.setInt(2, requestId);
+            return stmt.executeUpdate() > 0;
+        } catch (Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi!");
+        }
+        return false;
+    }
+}
