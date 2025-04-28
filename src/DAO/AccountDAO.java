@@ -25,7 +25,7 @@ public class AccountDAO {
             }
         } catch (Exception e) {
             // e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return list;
     }
@@ -44,7 +44,7 @@ public class AccountDAO {
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
             // e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return false;
     }
@@ -68,7 +68,7 @@ public class AccountDAO {
             }
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return null;
     }

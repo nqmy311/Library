@@ -20,7 +20,7 @@ public class UserDAO {
             return true;
         } catch (Exception e) {
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return false;
     }
@@ -47,7 +47,7 @@ public class UserDAO {
             }
         } catch (Exception e) {
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return null;
     }

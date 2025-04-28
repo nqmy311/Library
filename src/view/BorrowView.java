@@ -11,6 +11,10 @@ public class BorrowView {
     private final BorrowController controller = new BorrowController();
     private final Scanner scanner = new Scanner(System.in);
 
+    public void displayMessage(String message) {
+        System.out.println(message);
+    }
+
     public void showBorrowingManagementMenu() {
         while (true) {
             System.out.println("==== Quản lý mượn sách ====");
@@ -24,15 +28,15 @@ public class BorrowView {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
                 switch (choice) {
                     case 1:
-                        controller.BorrowRequests();
+                        controller.viewAllBorrowRequests();
                         break;
                     case 2:
-                        int requestIdApprove = getRequestIdInput();
-                        controller.approveBorrowRequest(requestIdApprove);
+                        //int requestIdApprove = getRequestIdInput();
+                        //controller.approveBorrowRequest(requestIdApprove);
                         break;
                     case 3:
-                        int requestIdReject = getRequestIdInput();
-                        controller.rejectBorrowRequest(requestIdReject);
+                        //int requestIdReject = getRequestIdInput();
+                        //controller.rejectBorrowRequest(requestIdReject);
                         break;
                     case 0:
                         return;

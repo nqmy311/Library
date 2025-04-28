@@ -26,7 +26,7 @@ public class BorrowRecordDAO {
             return stmt.executeUpdate() > 0;
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return false;
     }
@@ -47,12 +47,11 @@ public class BorrowRecordDAO {
                 record.setReturnDate(rs.getDate("return_date"));
                 record.setStatus(rs.getString("status"));
                 record.setBook_condition(rs.getString("book_condition"));
-                record.setFile_amount(rs.getDouble("fine_amount"));
                 return record;
             }
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return null;
     }
@@ -75,12 +74,11 @@ public class BorrowRecordDAO {
                 record.setReturnDate(rs.getDate("return_date"));
                 record.setStatus(rs.getString("status"));
                 record.setBook_condition(rs.getString("book_condition"));
-                record.setFile_amount(rs.getDouble("fine_amount"));
                 records.add(record);
             }
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return records;
     }
@@ -102,12 +100,11 @@ public class BorrowRecordDAO {
                 record.setReturnDate(rs.getDate("return_date"));
                 record.setStatus(rs.getString("status"));
                 record.setBook_condition(rs.getString("book_condition"));
-                record.setFile_amount(rs.getDouble("fine_amount"));
                 records.add(record);
             }
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return records;
     }
@@ -122,7 +119,7 @@ public class BorrowRecordDAO {
             return stmt.executeUpdate() > 0;
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return false;
     }

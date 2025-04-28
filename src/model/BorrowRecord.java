@@ -11,10 +11,8 @@ public class BorrowRecord {
     private Date returnDate;
     private String status;
     private String book_condition;
-    private double fine_amount;
 
     public BorrowRecord(){
-
     }
 
     public BorrowRecord(int userId, int bookId, Date borrowDate, Date dueDate) {
@@ -24,7 +22,6 @@ public class BorrowRecord {
         this.dueDate = dueDate;
         this.status = "Đang được mượn";
         this.book_condition = "Bình thường";
-        this.fine_amount = 0.0;
     }
 
     public int getRecord_id() {
@@ -89,13 +86,5 @@ public class BorrowRecord {
 
     public void setBook_condition(String book_condition) {
         this.book_condition = book_condition;
-    }
-
-    public double getFine_amount() {
-        return this.fine_amount;
-    }
-
-    public void setFile_amount(double fine_amount) {
-        this.fine_amount = fine_amount;
     }
 }

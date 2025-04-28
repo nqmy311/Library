@@ -22,7 +22,7 @@ public class BorrowRequestDAO {
             return stmt.executeUpdate() > 0;
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return false;
     }
@@ -45,7 +45,7 @@ public class BorrowRequestDAO {
             }
         } catch(Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return list;
     }
@@ -68,7 +68,7 @@ public class BorrowRequestDAO {
             }
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return null;
     }
@@ -92,7 +92,7 @@ public class BorrowRequestDAO {
             }
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return requests;
     }
@@ -107,7 +107,7 @@ public class BorrowRequestDAO {
             return stmt.executeUpdate() > 0;
         } catch (Exception e){
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return false;
     }

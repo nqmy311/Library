@@ -32,7 +32,7 @@ public class BookDAO {
             }
         } catch (Exception e) {
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return list;
     }
@@ -55,7 +55,7 @@ public class BookDAO {
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return false;
     }
@@ -69,7 +69,7 @@ public class BookDAO {
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return false;
     }
@@ -91,11 +91,11 @@ public class BookDAO {
             stmt.setInt(10, book.getPenalty_rate());
             stmt.setInt(11, book.getBook_Id());
             return stmt.executeUpdate() > 0;
-    } catch (Exception e) {
-        //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
-    }
-    return false;
+        } catch (Exception e) {
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
+        }
+        return false;
     }
 
     public Book findBookByID(int book_id) {
@@ -122,7 +122,7 @@ public class BookDAO {
             }
         } catch (Exception e) {
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return null;
     }
@@ -152,7 +152,7 @@ public class BookDAO {
             }
         } catch (Exception e) {
             //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi!");
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return list;
     }

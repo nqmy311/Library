@@ -12,21 +12,34 @@ public class BorrowController {
     private final BorrowRequestDAO borrowRequestDAO = new BorrowRequestDAO();
     private final BorrowRecordDAO borrowRecordDAO = new BorrowRecordDAO();
     private final BorrowView borrowView = new BorrowView();
-    public boolean requestBorrowBook(BorrowRequest request) {
-        return borrowRequestDAO.createBorrowRequest(request);
+    public void requestBorrowBook(BorrowRequest request) {
+        boolean success = borrowRequestDAO.createBorrowRequest(request);
+        if (success) {
+            borrowView.displayMessage("Gửi yêu cầu mượn sách thành công!");
+        } else {
+            borrowView.displayMessage("Gửi yêu cầu mượn sách thất bại!");
+        }
     }
-    public ArrayList<BorrowRequest> BorrowRequests(){
-        return borrowRequestDAO.BorrowRequests();
+    public void viewBorrowRequests(int userId){
+        ArrayList<BorrowRequest> requests = borrowRequestDAO.getBorrowRequestByUserId(userId);
+        borrowView.displayBorrowRequests(requests);
     }
-    public BorrowRequest getBorrowRequestById(int requestId){
-        return borrowRequestDAO.getBorrowRequestById(requestId);
+
+    public void viewBorrowRecords(int userId){
+        ArrayList<BorrowRecord> records = borrowRecordDAO.getBorrowRecordsByUserId(userId);
+        borrowView.displayBorrowRecords(records);
     }
-    public ArrayList<BorrowRequest> getBorrowRequestByUserId(int userId){
-        return borrowRequestDAO.getBorrowRequestByUserId(userId);
+
+    public void viewAllBorrowRequests(){
+        ArrayList<BorrowRequest> requests = borrowRequestDAO.BorrowRequests();
+        borrowView.displayAllBorrowRequests(requests);
     }
-    public boolean updateBorrowRequestStatus(int requestId, String status){
-        return borrowRequestDAO.updateBorrowRequestStatus(requestId, status);
+
+    public void viewAllBorrowRecords(){
+        ArrayList<BorrowRecord> records = borrowRecordDAO.getAllBorrowRecords();
+        borrowView.displayAllBorrowRecords(records);
     }
+
     public void approveBorrowRequest(int requestId, Date borrowDate) {
         BorrowRequest request = borrowRequestDAO.getBorrowRequestById(requestId);
         if (request != null && request.getStatus().equals("Đang chờ duyệt")) {
@@ -62,7 +75,7 @@ public class BorrowController {
         }
     }
 
-    public ArrayList<BorrowRecord> ListReturnRequests(){
+    public void viewALlReturnRequests(){
         ArrayList<BorrowRecord> requests = new ArrayList<>();
         ArrayList<BorrowRecord> records = borrowRecordDAO.getAllBorrowRecords();
         for(BorrowRecord record : records){
@@ -70,7 +83,7 @@ public class BorrowController {
                 requests.add(record);
             }
         }
-        return requests;
+        borrowView.displayReturnRequests(requests);
     }
 
     public void requestReturnBook(int recordId){
@@ -89,7 +102,7 @@ public class BorrowController {
     public void markBookAsReturned(int recordId, Date returnDate){
         BorrowRecord record = borrowRecordDAO.getBorrowRecordById(recordId);
         if(record != null && record.getStatus().equals("Yêu cầu trả")){
-            record.setStatus(calculateReturnStatus(recordId));
+            record.setStatus(calculateReturnStatus(record));
             record.setReturnDate(returnDate);
             if(borrowRecordDAO.updateBorrowRecordStatus(recordId, record.getStatus())){
                 borrowView.displayMessage("Phiếu mượn số " + recordId + " đã được đánh dấu là đã trả.");
