@@ -1,17 +1,28 @@
 package Controller;
-import DAO.BorrowRequestDAO;
-import DAO.BorrowRecordDAO;
+import DAO.*;
 import model.BorrowRequest;
 import model.BorrowRecord;
 import view.BorrowView;
 import java.util.Date;
 import java.util.ArrayList;
+import model.Violation;
+import DAO.BookDAO;
+import model.Book;
 import java.util.Calendar;
 
 public class BorrowController {
-    private final BorrowRequestDAO borrowRequestDAO = new BorrowRequestDAO();
-    private final BorrowRecordDAO borrowRecordDAO = new BorrowRecordDAO();
-    private final BorrowView borrowView = new BorrowView();
+    private final BorrowRequestDAO borrowRequestDAO;
+    private final BorrowRecordDAO borrowRecordDAO;
+    private final BorrowView borrowView;
+    private final BookDAO bookDAO;
+    private final ViolationDAO violationDAO;
+    public BorrowController(){
+        this.borrowRequestDAO = new BorrowRequestDAO();
+        this.borrowRecordDAO = new BorrowRecordDAO();
+        this.borrowView = new BorrowView(this);
+        this.bookDAO = new BookDAO();
+        this.violationDAO = new ViolationDAO();
+    }
     public void requestBorrowBook(BorrowRequest request) {
         boolean success = borrowRequestDAO.createBorrowRequest(request);
         if (success) {
@@ -43,10 +54,21 @@ public class BorrowController {
     public void approveBorrowRequest(int requestId, Date borrowDate) {
         BorrowRequest request = borrowRequestDAO.getBorrowRequestById(requestId);
         if (request != null && request.getStatus().equals("Đang chờ duyệt")) {
+            Date calculatedBorrowDate = (borrowDate != null) ? borrowDate : new Date();
+            if (calculatedBorrowDate.before(request.getRequestDate())) {
+                borrowView.displayMessage("Lỗi: Ngày mượn không được trước ngày yêu cầu mượn.");
+                return;
+            }
+            Book book = bookDAO.findBookByID(request.getBookId());
+            if (book == null || book.getAvailable() <= 0) {
+                borrowView.displayMessage("Lỗi: Sách không có sẵn để cho mượn.");
+                return;
+            }
             if (borrowRequestDAO.updateBorrowRequestStatus(requestId, "Đã được duyệt")) {
                 if (borrowDate != null) {
                     BorrowRecord record = new BorrowRecord(request.getUserId(), request.getBookId(), borrowDate, calculateDueDate(borrowDate));
                     if (borrowRecordDAO.createBorrowRecord(record)) {
+                        bookDAO.decreaseBookAvailable(request.getBookId());
                         borrowView.displayMessage("Yêu cầu mượn số " + requestId + " đã được duyệt. Phiếu mượn đã được tạo.");
                     } else {
                         borrowView.displayMessage("Lỗi: Không thể tạo phiếu mượn.");
@@ -62,6 +84,13 @@ public class BorrowController {
         }
     }
 
+    private Date calculateDueDate(Date borrowDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(borrowDate);
+        calendar.add(Calendar.DAY_OF_YEAR, 14);
+        return calendar.getTime();
+    }
+
     public void rejectBorrowRequest(int requestId){
         BorrowRequest request = borrowRequestDAO.getBorrowRequestById(requestId);
         if(request != null && request.getStatus().equals("Đang chờ duyệt")){
@@ -71,11 +100,11 @@ public class BorrowController {
                 borrowView.displayMessage("Lỗi: Không thể cập nhật trạng thái yêu cầu mượn.");
             }
         } else {
-            borrowView.displayMessage("Không thể từ chối yêu cầu mượn số" + requestId + " hoặc yêu cầu không ở trạng thái chờ duyệt.");
+            borrowView.displayMessage("Không thể từ chối yêu cầu mượn số " + requestId + " (có thể do không tồn tại hoặc yêu cầu không ở trạng thái chờ duyệt).");
         }
     }
 
-    public void viewALlReturnRequests(){
+    public void viewAllReturnRequests(){
         ArrayList<BorrowRecord> requests = new ArrayList<>();
         ArrayList<BorrowRecord> records = borrowRecordDAO.getAllBorrowRecords();
         for(BorrowRecord record : records){
@@ -99,27 +128,75 @@ public class BorrowController {
         }
     }
 
-    public void markBookAsReturned(int recordId, Date returnDate){
+    public void markBookAsReturned(int recordId, Date returnDate) {
         BorrowRecord record = borrowRecordDAO.getBorrowRecordById(recordId);
-        if(record != null && record.getStatus().equals("Yêu cầu trả")){
-            record.setStatus(calculateReturnStatus(record));
-            record.setReturnDate(returnDate);
-            if(borrowRecordDAO.updateBorrowRecordStatus(recordId, record.getStatus())){
-                borrowView.displayMessage("Phiếu mượn số " + recordId + " đã được đánh dấu là đã trả.");
-            } else{
-                borrowView.displayMessage("Lỗi: Không thể cập nhật trạng thái phiếu mượn.");
-            }
+        if (record == null || !record.getStatus().equals("Yêu cầu trả")) {
+            borrowView.displayMessage("Không thể đánh dấu đã trả cho phiếu mượn số " + recordId + " (có thể do không tồn tại hoặc không ở trạng thái 'Yêu cầu trả').");
+            return;
         }
-        else{
-            borrowView.displayMessage("Không thể đánh dấu đã trả cho phiếu mượn số " + recordId + " hoặc phiếu mượn không ở trạng thái yêu cầu trả.");
+        if (returnDate.before(record.getBorrowDate())) {
+            borrowView.displayMessage("Lỗi: Ngày trả sách không được trước ngày mượn.");
+            return;
+        }
+        record.setReturnDate(returnDate);
+        String newStatus = calculateReturnStatus(record);
+        record.setStatus(newStatus);
+        if (!borrowRecordDAO.updateBorrowRecordStatus(recordId, newStatus)) {
+            borrowView.displayMessage("Cập nhật trạng thái trả thất bại!");
+            return;
+        }
+        bookDAO.increaseBookAvailable(record.getBookId());
+        borrowView.displayMessage("Cập nhật trạng thái trả thành công!");
+        double totalFineAmount = 0;
+        StringBuilder violationReason = new StringBuilder();
+        if (newStatus.equals("Trả muộn")) {
+            double lateReturnFine = handleLateReturn(record);
+            totalFineAmount += lateReturnFine;
+            violationReason.append("Trả muộn");
+        }
+        String bookCondition = borrowView.getBookConditionInput();
+        if (bookCondition.equals("Bị hỏng") || bookCondition.equals("Bị mất")) {
+            double damageFine = handleDamagedOrLostBook(record, bookCondition);
+            totalFineAmount += damageFine;
+            if (!violationReason.isEmpty()) violationReason.append(", ");
+            violationReason.append(bookCondition.equals("Bị hỏng") ? "Sách bị hỏng" : "Sách bị mất");
+        }
+        if (totalFineAmount > 0) {
+            Violation violation = new Violation(record.getUserId(), record.getRecord_id(), returnDate, violationReason.toString(), totalFineAmount);
+            if (violationDAO.createViolation(violation)) {
+                borrowView.displayMessage("Đã ghi nhận vi phạm: " + violationReason + ". Tiền phạt: " + totalFineAmount + " đồng.");
+            } else {
+                borrowView.displayMessage("Không thể ghi nhận vi phạm.");
+            }
+        } else {
+            borrowView.displayMessage("Phiếu mượn số " + recordId + " đã được đánh dấu là đã trả vào ngày: " + returnDate + ".");
         }
     }
 
-    private Date calculateDueDate(Date borrowDate) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(borrowDate);
-        calendar.add(Calendar.DAY_OF_YEAR, 14);
-        return calendar.getTime();
+
+    private double handleLateReturn(BorrowRecord record) {
+        long overDueMs = record.getReturnDate().getTime() - record.getDueDate().getTime();
+        long overDueDays = overDueMs / (24 * 60 * 60 * 1000);
+        if (overDueDays > 0) {
+            return overDueDays * 10000;
+        }
+        return 0;
+    }
+
+    private double handleDamagedOrLostBook(BorrowRecord record, String condition) {
+        Book book = bookDAO.findBookByID(record.getBookId());
+        if (book != null) {
+            double fineAmount = book.getPenalty_rate();
+            if (condition.equals("Bị mất")) {
+                bookDAO.decreaseBookAvailable(record.getBookId());
+                bookDAO.decreaseBookQuantity(record.getBookId());
+                return fineAmount;
+            }
+            else{
+                return fineAmount / 2;
+            }
+        }
+        return 0;
     }
 
     private String calculateReturnStatus(BorrowRecord record){

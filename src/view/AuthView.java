@@ -64,19 +64,23 @@ public class AuthView {
             System.out.println("0. Thoát");
             System.out.println("============================");
             System.out.print("Chọn chức năng: ");
-            int choice = Integer.parseInt(scanner.nextLine());
-            switch (choice) {
-                case 1:
-                    register();
-                    break;
-                case 2:
-                    login();
-                    break;
-                case 0:
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ!");
+            try {
+                int choice = Integer.parseInt(scanner.nextLine());
+                switch (choice) {
+                    case 1:
+                        register();
+                        break;
+                    case 2:
+                        login();
+                        break;
+                    case 0:
+                        System.exit(0);
+                        break;
+                    default:
+                        System.out.println("Lựa chọn không hợp lệ!");
+                }
+            } catch (Exception e){
+                System.out.println("Đã xảy ra lỗi: " + e.getMessage());
             }
         }
     }

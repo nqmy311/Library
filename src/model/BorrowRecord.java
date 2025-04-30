@@ -11,6 +11,8 @@ public class BorrowRecord {
     private Date returnDate;
     private String status;
     private String book_condition;
+    private String bookTitle;
+    private String userName;
 
     public BorrowRecord(){
     }
@@ -86,5 +88,21 @@ public class BorrowRecord {
 
     public void setBook_condition(String book_condition) {
         this.book_condition = book_condition;
+    }
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

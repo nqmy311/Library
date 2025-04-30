@@ -8,6 +8,8 @@ public class BorrowRequest {
     private int book_id;
     private Date requestDate;
     private String status;
+    private String bookTitle;
+    private String userName;
 
     public BorrowRequest(){
 
@@ -58,6 +60,22 @@ public class BorrowRequest {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 }

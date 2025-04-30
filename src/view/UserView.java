@@ -2,13 +2,23 @@ package view;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import Controller.ViolationController;
 import model.User;
 import Controller.BookController;
 import model.Book;
+import Controller.BorrowController;
 
 public class UserView {
     private final Scanner scanner = new Scanner(System.in);
-    private final BookController controller = new BookController();
+    private final BookController bookController = new BookController();
+    private final BorrowController borrowController = new BorrowController();
+    private final ViolationController violationcontroller = new ViolationController();
+    private final ViolationView violationView = new ViolationView(violationcontroller);
+
+    public void displayMessage(String message) {
+        System.out.println(message);
+    }
 
     public void showMenu(User user) {
         System.out.println("==== GIAO DIỆN NGƯỜI DÙNG THƯ VIỆN====");
@@ -19,6 +29,7 @@ public class UserView {
         System.out.println("5. Gửi yêu cầu mượn sách");
         System.out.println("6. Gửi yêu cầu trả sách");
         System.out.println("7. Đánh giá sách");
+        System.out.println("8. Xem vi phạm của tài khoản");
         System.out.println("0. Đăng xuất");
         System.out.println("======================================");
         System.out.print("Chọn chức năng: ");
@@ -34,14 +45,19 @@ public class UserView {
                 findBook();
                 break;
             case 4:
-
+                borrowController.viewAllBorrowRecords();
                 break;
             case 5:
                 //BorrowView
                 break;
             case 6:
-
+                borrowController.viewBorrowRecords(user.getUser_Id());
                 break;
+            case 7:
+                violationcontroller.viewViolationsByUserId(user.getUser_Id());
+                break;
+            case 8:
+
             case 0:
                 System.out.println("Đăng xuất ...");
                 break;
@@ -63,7 +79,7 @@ public class UserView {
     }
 
     private void listBooks() {
-        ArrayList<Book> list = controller.listBook();
+        ArrayList<Book> list = bookController.listBook();
         System.out.println("==== Danh sách sách ====");
         System.out.printf("%-5s | %-30s | %-20s | %-15s | %-4s | %-30s | %-10s | %-10s | %-8s | %-8s | %-12s\n",
                 "ID", "Title", "Author", "Publisher", "Year", "Category", "Location", "Language", "Qty", "Avail",
@@ -94,7 +110,7 @@ public class UserView {
         String keyword = checkStrInput("Nhập ID sách hoặc tên sách để tìm (Muốn thoát vui lòng chon số 0): ");
         if (keyword.matches("\\d+")) {
             int book_id = Integer.parseInt(keyword);
-            Book book = controller.findBookByID(book_id);
+            Book book = bookController.findBookByID(book_id);
             if (book == null) {
                 System.out.println("Không thể tìm thấy sách!");
                 return;
@@ -113,7 +129,7 @@ public class UserView {
             System.out.println("Mức phạt:         " + book.getPenalty_rate() + " VND/day");
         }
         else {
-            ArrayList<Book> list = controller.findBookByName(keyword);
+            ArrayList<Book> list = bookController.findBookByName(keyword);
             if(list.isEmpty()){
                 System.out.println("Không tìm thấy sách nào phù hợp!");
             }

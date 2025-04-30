@@ -156,4 +156,63 @@ public class BookDAO {
         }
         return list;
     }
+
+    public void updateBookAvailable(int bookId, int available) {
+        String sql = "UPDATE books SET available = ? WHERE book_id = ?";
+        try{
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, available);
+            statement.setInt(2, bookId);
+            statement.executeUpdate();
+        } catch (Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
+        }
+    }
+
+    public void decreaseBookAvailable(int bookId) {
+        String sql = "UPDATE books SET available = available - 1 WHERE book_id = ? AND available > 0";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, bookId);
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated == 0) {
+                System.out.println("Không đủ sách để cho mượn hoặc sách không tồn tại.");
+            }
+        } catch (Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
+        }
+    }
+
+    public void increaseBookAvailable(int bookId)  {
+        String sql = "UPDATE books SET available = available + 1 WHERE book_id = ?";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, bookId);
+            statement.executeUpdate();
+        } catch(Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
+        }
+    }
+
+    public void decreaseBookQuantity(int bookId) {
+        String sql = "UPDATE books SET quantity = quantity - 1 WHERE book_id = ? AND quantity > 0";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, bookId);
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated == 0) {
+                System.out.println("Không đủ sách để cho mượn hoặc sách không tồn tại.");
+            }
+        } catch (Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
+        }
+    }
 }

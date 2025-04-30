@@ -1,13 +1,24 @@
 package view;
 
 import java.util.*;
+
+import Controller.BorrowController;
+import Controller.ViolationController;
 import model.User;
+import util.DBConnection;
 
 public class AdminView {
     private final BookView bookView = new BookView();
     private final AccountView accountView = new AccountView();
     private final Scanner scanner = new Scanner(System.in);
-    private final BorrowView borrowView = new BorrowView();
+    private final BorrowController borrowcontroller = new BorrowController();
+    private final BorrowView borrowView = new BorrowView(borrowcontroller);
+    private final ViolationController violationcontroller = new ViolationController();
+    private final ViolationView violationView = new ViolationView(violationcontroller);
+    private final java.sql.Connection dbConnection = DBConnection.getConnection();
+    private final RevenueReportView revenueReportView = new RevenueReportView(new Controller.RevenueReportController(dbConnection, new RevenueReportView(null)));
+    private final StatisticsView statisticsView = new StatisticsView(new Controller.StatisticsController(dbConnection, new StatisticsView(null)));
+
     public void showMenu(User user) {
         while (true) {
             System.out.println("==== QUẢN LÝ THƯ VIỆN ====");
@@ -38,15 +49,16 @@ public class AdminView {
                         borrowView.showReturningManagementMenu();
                         break;
                     case 5:
+                        borrowcontroller.viewAllBorrowRecords();
                         break;
                     case 6:
-                        // ViolationView.showViolationMenu();
+                        violationView.showViolationMenu();
                         break;
                     case 7:
-                        ReportView.showReportMenu();
+                        revenueReportView.showMenu();
                         break;
                     case 8:
-
+                        statisticsView.showStatisticsMenu();
                         break;
                     case 0:
                         System.out.println("Đăng xuất ...");

@@ -5,12 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-
 import model.BorrowRecord;
-import model.BorrowRequest;
 import util.DBConnection;
-import model.User;
-import model.Book;
+
 
 public class BorrowRecordDAO {
     public boolean createBorrowRecord(BorrowRecord record){
@@ -32,7 +29,11 @@ public class BorrowRecordDAO {
     }
 
     public BorrowRecord getBorrowRecordById(int recordId){
-        String sql = "SELECT * FROM borrow_records WHERE record_id = ?";
+        String sql = "SELECT br.record_id, br.user_id, u.name AS user_name, br.book_id, b.title AS book_title, br.borrow_date, br.due_date, br.return_date, br.status, br.book_condition " +
+                 "FROM borrow_records br " +
+                 "JOIN users u ON br.user_id = u.user_id " +
+                 "JOIN books b ON br.book_id = b.book_id " +
+                 "WHERE record_id = ?";
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -41,7 +42,9 @@ public class BorrowRecordDAO {
                 BorrowRecord record = new BorrowRecord();
                 record.setRecord_id(rs.getInt("record_id"));
                 record.setUserId(rs.getInt("user_id"));
+                record.setUserName(rs.getString("user_name"));
                 record.setBook_id(rs.getInt("book_id"));
+                record.setBookTitle(rs.getString("book_title"));
                 record.setBorrowDate(rs.getDate("borrow_date"));
                 record.setDueDate(rs.getDate("due_date"));
                 record.setReturnDate(rs.getDate("return_date"));
@@ -58,7 +61,11 @@ public class BorrowRecordDAO {
 
     public ArrayList<BorrowRecord> getBorrowRecordsByUserId(int userId) {
         ArrayList<BorrowRecord> records = new ArrayList<>();
-        String sql = "SELECT * FROM borrow_records WHERE user_id = ?";
+        String sql = "SELECT br.record_id, br.user_id, u.name AS user_name, br.book_id, b.title AS book_title, br.borrow_date, br.due_date, br.return_date, br.status, br.book_condition " +
+                "FROM borrow_records br " +
+                "JOIN users u ON br.user_id = u.user_id " +
+                "JOIN books b ON br.book_id = b.book_id " +
+                "WHERE record_id = ?";
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -68,7 +75,9 @@ public class BorrowRecordDAO {
                 BorrowRecord record = new BorrowRecord();
                 record.setRecord_id(rs.getInt("record_id"));
                 record.setUserId(rs.getInt("user_id"));
+                record.setUserName(rs.getString("user_name"));
                 record.setBook_id(rs.getInt("book_id"));
+                record.setBookTitle(rs.getString("book_title"));
                 record.setBorrowDate(rs.getDate("borrow_date"));
                 record.setDueDate(rs.getDate("due_date"));
                 record.setReturnDate(rs.getDate("return_date"));
@@ -85,7 +94,11 @@ public class BorrowRecordDAO {
 
     public ArrayList<BorrowRecord> getAllBorrowRecords(){
         ArrayList<BorrowRecord> records = new ArrayList<>();
-        String sql = "SELECT * FROM borrow_records";
+        String sql = "SELECT br.record_id, br.user_id, u.name AS user_name, br.book_id, b.title AS book_title, br.borrow_date, br.due_date, br.return_date, br.status, br.book_condition " +
+                "FROM borrow_records br " +
+                "JOIN users u ON br.user_id = u.user_id " +
+                "JOIN books b ON br.book_id = b.book_id " +
+                "WHERE record_id = ?";
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -94,7 +107,9 @@ public class BorrowRecordDAO {
                 BorrowRecord record = new BorrowRecord();
                 record.setRecord_id(rs.getInt("record_id"));
                 record.setUserId(rs.getInt("user_id"));
+                record.setUserName(rs.getString("user_name"));
                 record.setBook_id(rs.getInt("book_id"));
+                record.setBookTitle(rs.getString("book_title"));
                 record.setBorrowDate(rs.getDate("borrow_date"));
                 record.setDueDate(rs.getDate("due_date"));
                 record.setReturnDate(rs.getDate("return_date"));
@@ -108,6 +123,7 @@ public class BorrowRecordDAO {
         }
         return records;
     }
+
 
     public boolean updateBorrowRecordStatus(int recordId, String status){
         String sql = "UPDATE borrow_records SET status = ? WHERE record_id = ?";
