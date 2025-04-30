@@ -94,10 +94,10 @@ public class ViolationView {
             return;
         }
         System.out.println("--- Danh sách vi phạm của người dùng ---");
-        System.out.printf("%-10s %-20s %-10s %-10s %-15s %-20s %-15s %-20s%n", "ID vi phạm", "Tên Người Dùng", "ID Người Dùng", "ID Phiếu", "Ngày vi phạm", "Lý do", "Tiền phạt", "Tình Trạng Thanh Toán");
+        System.out.printf("%-10s | %-10s | %-20s | %-10s | %-15s | %-20s | %-15s | %-20s\n", "ID vi phạm", "ID Người Dùng", "Tên Người Dùng", "ID Phiếu Mượn", "Ngày vi phạm", "Lý do", "Tiền phạt", "Tình Trạng Thanh Toán");
         for (Violation violation : violations) {
-            System.out.printf("%-10d %-20s %-10d %-10d %-15s %-20s %-15.2f %-20s%n",
-                    violation.getViolationId(), violation.getUserName(), violation.getUserId(), violation.getRecordId(), violation.getViolationDate(),
+            System.out.printf("%-10d | %-10d | %-20s | %-10d | %-15s | %-20s | %-15.2f | %-20s\n",
+                    violation.getViolationId(), violation.getUserId(), violation.getUserName(), violation.getRecordId(), violation.getViolationDate(),
                     violation.getReason(), violation.getFineAmount(), violation.isPaid() ? "Đã thanh toán" : "Chưa thanh toán");
         }
         System.out.println("------------------------");
@@ -109,10 +109,10 @@ public class ViolationView {
             return;
         }
         System.out.println("--- Danh sách vi phạm ---");
-        System.out.printf("%-10s %-20s %-10s %-10s %-15s %-20s %-15s %-20s%n", "ID vi phạm", "Tên Người Dùng", "ID Người Dùng", "ID Phiếu", "Ngày vi phạm", "Lý do", "Tiền phạt", "Tình Trạng Thanh Toán");
+        System.out.printf("%-10s | %-10s | %-20s | %-10s | %-15s | %-20s | %-15s | %-20s\n", "ID vi phạm", "ID Người Dùng", "Tên Người Dùng", "ID Phiếu", "Ngày vi phạm", "Lý do", "Tiền phạt", "Tình Trạng Thanh Toán");
         for (Violation violation : violations) {
-            System.out.printf("%-10d %-20s %-10d %-10d %-15s %-20s %-15.2f %-20s%n",
-                    violation.getViolationId(), violation.getUserName(), violation.getUserId(), violation.getRecordId(), violation.getViolationDate(),
+            System.out.printf("%-10d | %-10d | %-20s | %-10d | %-15s | %-20s | %-15.2f | %-20s\n",
+                    violation.getViolationId(), violation.getUserId(), violation.getUserName(), violation.getRecordId(), violation.getViolationDate(),
                     violation.getReason(), violation.getFineAmount(), violation.isPaid() ? "Đã thanh toán" : "Chưa thanh toán");
         }
         System.out.println("------------------------");

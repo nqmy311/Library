@@ -54,8 +54,7 @@ public class BorrowController {
     public void approveBorrowRequest(int requestId, Date borrowDate) {
         BorrowRequest request = borrowRequestDAO.getBorrowRequestById(requestId);
         if (request != null && request.getStatus().equals("Đang chờ duyệt")) {
-            Date calculatedBorrowDate = (borrowDate != null) ? borrowDate : new Date();
-            if (calculatedBorrowDate.before(request.getRequestDate())) {
+            if (borrowDate.before(request.getRequestDate())) {
                 borrowView.displayMessage("Lỗi: Ngày mượn không được trước ngày yêu cầu mượn.");
                 return;
             }
@@ -65,16 +64,12 @@ public class BorrowController {
                 return;
             }
             if (borrowRequestDAO.updateBorrowRequestStatus(requestId, "Đã được duyệt")) {
-                if (borrowDate != null) {
-                    BorrowRecord record = new BorrowRecord(request.getUserId(), request.getBookId(), borrowDate, calculateDueDate(borrowDate));
-                    if (borrowRecordDAO.createBorrowRecord(record)) {
-                        bookDAO.decreaseBookAvailable(request.getBookId());
-                        borrowView.displayMessage("Yêu cầu mượn số " + requestId + " đã được duyệt. Phiếu mượn đã được tạo.");
-                    } else {
-                        borrowView.displayMessage("Lỗi: Không thể tạo phiếu mượn.");
-                    }
+                BorrowRecord record = new BorrowRecord(request.getUserId(), request.getBookId(), borrowDate, calculateDueDate(borrowDate));
+                if (borrowRecordDAO.createBorrowRecord(record)) {
+                    bookDAO.decreaseBookAvailable(request.getBookId());
+                    borrowView.displayMessage("Yêu cầu mượn số " + requestId + " đã được duyệt. Phiếu mượn đã được tạo.");
                 } else {
-                    borrowView.displayMessage("Ngày mượn không hợp lệ.");
+                    borrowView.displayMessage("Lỗi: Không thể tạo phiếu mượn.");
                 }
             } else {
                 borrowView.displayMessage("Lỗi: Không thể cập nhật trạng thái yêu cầu mượn.");
@@ -124,7 +119,7 @@ public class BorrowController {
                 borrowView.displayMessage("Lỗi: Không thể cập nhật trạng thái phiếu mượn.");
             }
         } else {
-            borrowView.displayMessage("Không thể gửi yêu cầu trả sách cho phiếu mượn số " + recordId + " hoặc phiếu mượn không ở trạng thái đang được mượn.");
+            borrowView.displayMessage("Không thể gửi yêu cầu trả sách cho phiếu mượn số " + recordId + " hoặc phiếu mượn không ở trạng thái 'Đang được mượn'.");
         }
     }
 
@@ -141,6 +136,10 @@ public class BorrowController {
         record.setReturnDate(returnDate);
         String newStatus = calculateReturnStatus(record);
         record.setStatus(newStatus);
+        if (!borrowRecordDAO.updateReturnDate(recordId, returnDate)) {
+            borrowView.displayMessage("Lỗi: Không thể cập nhật ngày trả sách vào cơ sở dữ liệu.");
+            return;
+        }
         if (!borrowRecordDAO.updateBorrowRecordStatus(recordId, newStatus)) {
             borrowView.displayMessage("Cập nhật trạng thái trả thất bại!");
             return;
@@ -159,7 +158,11 @@ public class BorrowController {
             double damageFine = handleDamagedOrLostBook(record, bookCondition);
             totalFineAmount += damageFine;
             if (!violationReason.isEmpty()) violationReason.append(", ");
-            violationReason.append(bookCondition.equals("Bị hỏng") ? "Sách bị hỏng" : "Sách bị mất");
+            if (bookCondition.equals("Bị hỏng")) {
+                violationReason.append("Sách bị hỏng");
+            } else {
+                violationReason.append("Sách bị mất");
+            }
         }
         if (totalFineAmount > 0) {
             Violation violation = new Violation(record.getUserId(), record.getRecord_id(), returnDate, violationReason.toString(), totalFineAmount);
@@ -193,6 +196,7 @@ public class BorrowController {
                 return fineAmount;
             }
             else{
+                bookDAO.decreaseBookAvailable(record.getBookId());
                 return fineAmount / 2;
             }
         }

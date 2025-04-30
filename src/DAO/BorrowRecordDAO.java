@@ -1,6 +1,6 @@
 package DAO;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -37,6 +37,7 @@ public class BorrowRecordDAO {
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, recordId);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
                 BorrowRecord record = new BorrowRecord();
@@ -65,7 +66,7 @@ public class BorrowRecordDAO {
                 "FROM borrow_records br " +
                 "JOIN users u ON br.user_id = u.user_id " +
                 "JOIN books b ON br.book_id = b.book_id " +
-                "WHERE record_id = ?";
+                "WHERE br.user_id = ?";
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -97,8 +98,7 @@ public class BorrowRecordDAO {
         String sql = "SELECT br.record_id, br.user_id, u.name AS user_name, br.book_id, b.title AS book_title, br.borrow_date, br.due_date, br.return_date, br.status, br.book_condition " +
                 "FROM borrow_records br " +
                 "JOIN users u ON br.user_id = u.user_id " +
-                "JOIN books b ON br.book_id = b.book_id " +
-                "WHERE record_id = ?";
+                "JOIN books b ON br.book_id = b.book_id ";
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -136,6 +136,22 @@ public class BorrowRecordDAO {
         } catch (Exception e){
             //e.printStackTrace();
             System.out.println("Đã xảy ra lỗi: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean updateReturnDate(int recordId, Date returnDate) {
+        String sql = "UPDATE borrow_records SET return_date = ? WHERE record_id = ?";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setDate(1, new java.sql.Date(returnDate.getTime()));
+            stmt.setInt(2, recordId);
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (Exception e) {
+            //e.printStackTrace();
+            System.out.println("Lỗi khi cập nhật ngày trả sách: " + e.getMessage());
         }
         return false;
     }

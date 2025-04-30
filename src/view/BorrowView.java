@@ -100,11 +100,15 @@ public class BorrowView {
                         controller.viewAllReturnRequests();
                         break;
                     case 2:
-                        int recordId = checkIntInput("Nhập ID phiếu mượn yêu cầu trả: ");
+                        int recordId = checkIntInput("Nhập ID phiếu mượn yêu cầu trả (Muốn thoát điền số 0): ");
                         if(recordId == 0){
                             break;
                         }
                         Date returnDate = checkDateInput("Nhập ngày trả");
+                        if (returnDate == null) {
+                            System.out.println("Hủy thao tác xác nhận trả sách.");
+                            break;
+                        }
                         controller.markBookAsReturned(recordId, returnDate);
                         break;
                     case 0:
@@ -150,11 +154,14 @@ public class BorrowView {
 
     public Date checkDateInput(String prompt) {
         while(true){
-            System.out.print(prompt + " (yyyy-MM-dd): ");
+            System.out.print(prompt + " (yyyy-MM-dd, nhập 0 để huỷ): ");
             String dateString = scanner.nextLine().trim();
             if(dateString.isEmpty()){
                 System.out.println("Không được để trống!");
                 continue;
+            }
+            if (dateString.equals("0")) {
+                return null;
             }
             try {
                 return dateFormatter.parse(dateString);
@@ -170,13 +177,13 @@ public class BorrowView {
             System.out.println("Không có bản ghi mượn trả nào.");
             return;
         }
-        System.out.printf("%-10s | %-12s | %-15s | %-30s | %-10s | %-20s | %-15s | %-15s | %-15s | %-15s%n",
-                "ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "Tên Sách", "ID Sách", "Ngày mượn", "Ngày trả", "Ngày đến hạn", "Trạng thái", "Tình trạng sách");
+        System.out.printf("%-10s | %-12s | %-15s | %-30s | %-10s | %-20s | %-15s | %-15s\n",
+                "ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "Tên Sách", "ID Sách", "Ngày mượn", "Ngày đến hạn", "Trạng thái");
         System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
         for (BorrowRecord record : borrowRecords) {
-            System.out.printf("%-10d | %-12d | %-15s | %-30s | %-10d | %-20s | %-15s | %-15s | %-15s | %-15s%n",
+            System.out.printf("%-10d | %-12d | %-15s | %-30s | %-10d | %-20s | %-15s | %-15s",
                     record.getRecord_id(), record.getUserId(), record.getUserName(), record.getBookTitle(), record.getBookId(), record.getBorrowDate(),
-                    record.getReturnDate() != null ? record.getReturnDate() : "Chưa trả", record.getDueDate(), record.getStatus(), record.getBook_condition());
+                    record.getDueDate(), record.getStatus());
         }
     }
 
@@ -186,9 +193,9 @@ public class BorrowView {
             System.out.println("Không có yêu cầu mượn nào.");
             return;
         }
-        System.out.printf("%-10s%-12s%-20s%-10s%-30s%-20s%-20s%n", "ID Yêu cầu", "ID Tài khoản", "Tên Người Dùng", "ID Sách", "Tên Sách", "Ngày yêu cầu mượn", "Trạng thái");
+        System.out.printf("%-10s | %-12s | %-20s | %-10s | %-30s |%-20s | %-20s\n", "ID Yêu cầu", "ID Tài khoản", "Tên Người Dùng", "ID Sách", "Tên Sách", "Ngày yêu cầu mượn", "Trạng thái");
         for (BorrowRequest request : borrowRequests) {
-            System.out.printf("%-10d%-12d%-20s%-10d%-30s%-20s%-20s%n",
+            System.out.printf("%-10d | %-12d | %-20s | %-10d | %-30s | %-20s | %-20s\n",
                     request.getRequestId(), request.getUserId(), request.getUserName(), request.getBookId(), request.getBookTitle(), request.getRequestDate(), request.getStatus());
             System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");
         }
@@ -200,11 +207,11 @@ public class BorrowView {
             System.out.println("Không có bản ghi mượn trả nào.");
             return;
         }
-        System.out.printf("%-10s | %-12s | %-15s | %-30s | %-10s | %-20s | %-15s | %-15s | %-15s | %-15s%n",
+        System.out.printf("%-10s | %-12s | %-15s | %-30s | %-10s | %-20s | %-15s | %-15s | %-15s | %-15s\n",
                 "ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "Tên Sách", "ID Sách", "Ngày mượn", "Ngày trả", "Ngày đến hạn", "Trạng thái", "Tình trạng sách");
         System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
         for (BorrowRecord record : borrowRecords) {
-            System.out.printf("%-10d | %-12d | %-15s | %-30s | %-10d | %-20s | %-15s | %-15s | %-15s | %-15s%n",
+            System.out.printf("%-10d | %-12d | %-15s | %-30s | %-10d | %-20s | %-15s | %-15s | %-15s | %-15s\n",
                     record.getRecord_id(), record.getUserId(), record.getUserName(), record.getBookTitle(), record.getBookId(), record.getBorrowDate(),
                     record.getReturnDate() != null ? record.getReturnDate() : "Chưa trả", record.getDueDate(), record.getStatus(), record.getBook_condition());
         }
@@ -216,9 +223,9 @@ public class BorrowView {
             System.out.println("Không có yêu cầu mượn nào.");
             return; // Thoát nếu danh sách rỗng
         }
-        System.out.printf("%-10s%-12s%-20s%-10s%-30s%-20s%-20s%n", "ID Yêu cầu", "ID Tài khoản", "Tên Người Dùng", "ID Sách", "Tên Sách", "Ngày yêu cầu mượn", "Trạng thái");
+        System.out.printf("%-10s | %-12s | %-20s | %-10s | %-30s | %-20s | %-20s%n", "ID Yêu cầu", "ID Tài khoản", "Tên Người Dùng", "ID Sách", "Tên Sách", "Ngày yêu cầu mượn", "Trạng thái");
         for (BorrowRequest request : borrowRequests) {
-            System.out.printf("%-10d%-12d%-20s%-10d%-30s%-20s%-20s%n",
+            System.out.printf("%-10d | %-12d | %-20s | %-10d | %-30s | %-20s | %-20s\n",
                     request.getRequestId(), request.getUserId(), request.getUserName(), request.getBookId(), request.getBookTitle(), request.getRequestDate(), request.getStatus());
             System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");
         }
@@ -230,11 +237,11 @@ public class BorrowView {
             System.out.println("Không có phiếu mượn nào.");
             return;
         }
-        System.out.printf("%-10s | %-12s | %-15s | %-30s | %-10s | %-20s | %-15s | %-15s | %-15s | %-15s%n",
+        System.out.printf("%-10s | %-12s | %-15s | %-30s | %-10s | %-20s | %-15s | %-15s | %-15s | %-15s\n",
                 "ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "Tên Sách", "ID Sách", "Ngày mượn", "Ngày trả", "Ngày đến hạn", "Trạng thái", "Tình trạng sách");
         System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
         for (BorrowRecord record : borrowRecords) {
-            System.out.printf("%-10d | %-12d | %-15s | %-30s | %-10d | %-20s | %-15s | %-15s | %-15s | %-15s%n",
+            System.out.printf("%-10d | %-12d | %-15s | %-30s | %-10d | %-20s | %-15s | %-15s | %-15s | %-15s\n",
                     record.getRecord_id(), record.getUserId(), record.getUserName(), record.getBookTitle(), record.getBookId(), record.getBorrowDate(),
                     record.getReturnDate() != null ? record.getReturnDate() : "Chưa trả", record.getDueDate(), record.getStatus(), record.getBook_condition());
         }

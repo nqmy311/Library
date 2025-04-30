@@ -1,71 +1,86 @@
 package view;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
+import Controller.BookCommentController;
 import Controller.ViolationController;
+import model.BorrowRequest;
 import model.User;
 import Controller.BookController;
 import model.Book;
 import Controller.BorrowController;
+import util.DBConnection;
 
 public class UserView {
     private final Scanner scanner = new Scanner(System.in);
     private final BookController bookController = new BookController();
     private final BorrowController borrowController = new BorrowController();
     private final ViolationController violationcontroller = new ViolationController();
-    private final ViolationView violationView = new ViolationView(violationcontroller);
-
-    public void displayMessage(String message) {
-        System.out.println(message);
-    }
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    private final java.sql.Connection dbConnection = DBConnection.getConnection();
+    private final BookCommentView bookCommentView = new BookCommentView(new BookCommentController(dbConnection, new BookCommentView(null)));
 
     public void showMenu(User user) {
-        System.out.println("==== GIAO DIỆN NGƯỜI DÙNG THƯ VIỆN====");
-        System.out.println("1. Xem thông tin tài khoản cá nhân");
-        System.out.println("2. Xem thông tin sách");
-        System.out.println("3. Tìm kiếm sách");
-        System.out.println("4. Xem thông tin mượn / trả sách");
-        System.out.println("5. Gửi yêu cầu mượn sách");
-        System.out.println("6. Gửi yêu cầu trả sách");
-        System.out.println("7. Đánh giá sách");
-        System.out.println("8. Xem vi phạm của tài khoản");
-        System.out.println("0. Đăng xuất");
-        System.out.println("======================================");
-        System.out.print("Chọn chức năng: ");
-        int choice = Integer.parseInt(scanner.nextLine().trim());
-        switch (choice) {
-            case 1:
-                showProfile(user);
-                break;
-            case 2:
-                listBooks();
-                break;
-            case 3:
-                findBook();
-                break;
-            case 4:
-                borrowController.viewAllBorrowRecords();
-                break;
-            case 5:
-                //BorrowView
-                break;
-            case 6:
-                borrowController.viewBorrowRecords(user.getUser_Id());
-                break;
-            case 7:
-                violationcontroller.viewViolationsByUserId(user.getUser_Id());
-                break;
-            case 8:
-
-            case 0:
-                System.out.println("Đăng xuất ...");
-                break;
-            default:
-                System.out.println("Lựa chọn không hợp lệ! Hãy chọn lại.");
-                break;
+        while (true){
+            System.out.println("==== GIAO DIỆN NGƯỜI DÙNG THƯ VIỆN====");
+            System.out.println("1. Xem thông tin tài khoản cá nhân");
+            System.out.println("2. Xem thông tin sách");
+            System.out.println("3. Tìm kiếm sách");
+            System.out.println("4. Xem thông tin phiếu mượn / trả sách của tôi");
+            System.out.println("5. Gửi yêu cầu mượn sách");
+            System.out.println("6. Xem các yêu cầu mượn của tôi");
+            System.out.println("7. Gửi yêu cầu trả sách");
+            System.out.println("8. Đánh giá sách");
+            System.out.println("9. Xem vi phạm của tôi");
+            System.out.println("0. Đăng xuất");
+            System.out.println("======================================");
+            System.out.print("Chọn chức năng: ");
+            try{
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+                switch (choice) {
+                    case 1:
+                        showProfile(user);
+                        break;
+                    case 2:
+                        listBooks();
+                        break;
+                    case 3:
+                        findBook();
+                        break;
+                    case 4:
+                        borrowController.viewBorrowRecords(user.getUser_Id());
+                        break;
+                    case 5:
+                        requestBorrowBook(user.getUser_Id());
+                        break;
+                    case 6:
+                        borrowController.viewBorrowRequests(user.getUser_Id());
+                        break;
+                    case 7:
+                        int recordIdReturn = checkIntInput("Nhập phiếu mượn muôn trả: ");
+                        borrowController.requestReturnBook(recordIdReturn);
+                        break;
+                    case 8:
+                        bookCommentView.showBookCommentMenu(user.getUser_Id());
+                        break;
+                    case 9:
+                        violationcontroller.viewViolationsByUserId(user.getUser_Id());
+                        break;
+                    case 0:
+                        System.out.println("Đăng xuất ...");
+                        return;
+                    default:
+                        System.out.println("Lựa chọn không hợp lệ! Hãy chọn lại.");
+                        break;
+                }
+            } catch (Exception e){
+                System.out.println("Vui lòng nhập số hợp lệ!");
+            }
         }
-        scanner.close();
     }
 
     private void showProfile(User user) {
@@ -150,4 +165,40 @@ public class UserView {
         }
     }
 
+    private int checkIntInput(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Không được để trống!");
+                continue;
+            }
+            try {
+                return Integer.parseInt(input);
+            } catch (Exception e) {
+                System.out.println("Phải nhập một số nguyên hợp lệ!");
+            }
+        }
+    }
+
+    private void requestBorrowBook(int userId) {
+        System.out.println("==== Gửi yêu cầu mượn sách ====");
+        int bookId = checkIntInput("Nhập ID sách muốn mượn (Muốn thoát chọn số 0): ");
+        Book book = bookController.findBookByID(bookId);
+        if (book == null) {
+            System.out.println("Không tìm thấy sách có ID " + bookId + ".");
+            return;
+        }
+        Date requestDate = null;
+        while (requestDate == null) {
+            String dateString = checkStrInput("Nhập ngày mượn (yyyy-MM-dd): ");
+            try {
+                requestDate = dateFormatter.parse(dateString);
+            } catch (ParseException e) {
+                System.out.println("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd.");
+            }
+        }
+        BorrowRequest borrowRequest = new BorrowRequest(userId, bookId, requestDate);
+        borrowController.requestBorrowBook(borrowRequest);
+    }
 }

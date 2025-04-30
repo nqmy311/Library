@@ -7,9 +7,17 @@ import view.StatisticsView;
 import java.sql.Connection;
 import java.util.*;
 
-public class StatisticsController {
-    private final BorrowRecordDAO borrowRecordDAO = new BorrowRecordDAO();
-    private final StatisticsView statisticsView = new StatisticsView();
+public class StatisticController {
+    private final BorrowRecordDAO borrowRecordDAO;
+    private final StatisticsView statisticsView;
+    private final Connection connection;
+
+    public StatisticController (Connection connection, StatisticsView statisticsView)
+    {
+        this.connection = connection;
+        this.borrowRecordDAO = new BorrowRecordDAO();
+        this.statisticsView = statisticsView;
+    }
 
     public void displayMostBorrowedBooks() {
         List<BorrowRecord> allRecords = borrowRecordDAO.getAllBorrowRecords();

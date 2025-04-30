@@ -1,11 +1,16 @@
 package view;
 
-import Controller.StatisticsController;
+import Controller.StatisticController;
 import java.util.*;
 
 public class StatisticsView {
     private final Scanner scanner = new Scanner(System.in);
-    private final StatisticsController statisticsController = new StatisticsController();
+    private final StatisticController statisticsController;
+
+    public StatisticsView (StatisticController statisticController)
+    {
+        this.statisticsController = statisticController;
+    }
 
     public void showStatisticsMenu() {
         int choice = -1;

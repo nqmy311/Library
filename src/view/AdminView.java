@@ -17,7 +17,7 @@ public class AdminView {
     private final ViolationView violationView = new ViolationView(violationcontroller);
     private final java.sql.Connection dbConnection = DBConnection.getConnection();
     private final RevenueReportView revenueReportView = new RevenueReportView(new Controller.RevenueReportController(dbConnection, new RevenueReportView(null)));
-    private final StatisticsView statisticsView = new StatisticsView(new Controller.StatisticsController(dbConnection, new StatisticsView(null)));
+    private final StatisticsView statisticsView = new StatisticsView(new Controller.StatisticController(dbConnection, new StatisticsView(null)));
 
     public void showMenu(User user) {
         while (true) {

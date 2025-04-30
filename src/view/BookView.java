@@ -113,10 +113,10 @@ public class BookView {
         System.out.println(
                 "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         for (Book book : list) {
-            System.out.printf("%-5d | %-30s | %-20s | %-15s | %-4d | %-30s | %-10s | %-10s | %-8d | %-8d | %-12d\n",
+            System.out.printf("%-5d | %-30s | %-20s | %-15s | %-4d | %-30s | %-10s | %-10s | %-8d | %-8d | %-12s\n",
                     book.getBook_Id(), book.getTitle(), book.getAuthor(), book.getPublisher(),
                     book.getYear_published(), book.getCategory(), book.getLocation(),
-                    book.getLanguage(), book.getQuantity(), book.getAvailable(), book.getPenalty_rate());
+                    book.getLanguage(), book.getQuantity(), book.getAvailable(), String.format("%d VND", book.getPenalty_rate()));
         }
     }
 
@@ -242,7 +242,7 @@ public class BookView {
             System.out.println("Ngôn ngữ:         " + book.getLanguage());
             System.out.println("Số lượng:         " + book.getQuantity());
             System.out.println("Số lượng có sẵn:  " + book.getAvailable());
-            System.out.println("Mức phạt:         " + book.getPenalty_rate() + " VND/day");
+            System.out.println("Mức phạt:         " + book.getPenalty_rate() + " VND");
         }
         else {
             ArrayList<Book> list = controller.findBookByName(keyword);
@@ -257,10 +257,10 @@ public class BookView {
                 System.out.println(
                         "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 for (Book book : list) {
-                    System.out.printf("%-5d | %-30s | %-20s | %-15s | %-4d | %-30s | %-10s | %-10s | %-8d | %-8d | %-12d\n",
+                    System.out.printf("%-5d | %-30s | %-20s | %-15s | %-4d | %-30s | %-10s | %-10s | %-8d | %-8d | %-12s\n",
                             book.getBook_Id(), book.getTitle(), book.getAuthor(), book.getPublisher(),
                             book.getYear_published(), book.getCategory(), book.getLocation(),
-                            book.getLanguage(), book.getQuantity(), book.getAvailable(), book.getPenalty_rate());
+                            book.getLanguage(), book.getQuantity(), book.getAvailable(), String.format("%d VND", book.getPenalty_rate()));
                 }
             }
         }
