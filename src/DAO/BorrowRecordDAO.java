@@ -98,7 +98,8 @@ public class BorrowRecordDAO {
         String sql = "SELECT br.record_id, br.user_id, u.name AS user_name, br.book_id, b.title AS book_title, br.borrow_date, br.due_date, br.return_date, br.status, br.book_condition " +
                 "FROM borrow_records br " +
                 "JOIN users u ON br.user_id = u.user_id " +
-                "JOIN books b ON br.book_id = b.book_id ";
+                "JOIN books b ON br.book_id = b.book_id " +
+                "ORDER BY br.record_id ASC";
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -152,6 +153,21 @@ public class BorrowRecordDAO {
         } catch (Exception e) {
             //e.printStackTrace();
             System.out.println("Lỗi khi cập nhật ngày trả sách: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean updateBorrowRecordBookCondition(int recordId, String book_condition){
+        String sql = "UPDATE borrow_records SET book_condition = ? WHERE record_id = ?";
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, book_condition);
+            stmt.setInt(2, recordId);
+            return stmt.executeUpdate() > 0;
+        } catch (Exception e){
+            //e.printStackTrace();
+            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return false;
     }

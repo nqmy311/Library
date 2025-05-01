@@ -137,7 +137,7 @@ public class BorrowController {
         String newStatus = calculateReturnStatus(record);
         record.setStatus(newStatus);
         if (!borrowRecordDAO.updateReturnDate(recordId, returnDate)) {
-            borrowView.displayMessage("Lỗi: Không thể cập nhật ngày trả sách vào cơ sở dữ liệu.");
+            borrowView.displayMessage("Cập nhât ngày trả sách thất bại!");
             return;
         }
         if (!borrowRecordDAO.updateBorrowRecordStatus(recordId, newStatus)) {
@@ -154,6 +154,10 @@ public class BorrowController {
             violationReason.append("Trả muộn");
         }
         String bookCondition = borrowView.getBookConditionInput();
+        if (!borrowRecordDAO.updateBorrowRecordBookCondition(recordId, bookCondition)) {
+            borrowView.displayMessage("Cập nhật trạng thái sách thất bại!");
+            return;
+        }
         if (bookCondition.equals("Bị hỏng") || bookCondition.equals("Bị mất")) {
             double damageFine = handleDamagedOrLostBook(record, bookCondition);
             totalFineAmount += damageFine;

@@ -15,11 +15,11 @@ public class StatisticsView {
     public void showStatisticsMenu() {
         int choice = -1;
         while (choice != 0) {
-            System.out.println("==== THỐNG KÊ ====");
+            System.out.println("========== THỐNG KÊ ==========");
             System.out.println("1. Thống kê sách được mượn nhiều nhất");
             System.out.println("2. Thống kê người mượn sách nhiều nhất");
             System.out.println("0. Quay lại menu quản lý");
-            System.out.println("===================");
+            System.out.println("==============================");
             System.out.print("Chọn chức năng: ");
             String input = scanner.nextLine().trim();
             if (input.matches("\\d+")) {

@@ -27,7 +27,7 @@ public class StatisticController {
         for (BorrowRecord record : allRecords) {
             int bookId = record.getBookId();
             String bookTitle = record.getBookTitle();
-            if (bookTitle != null) { // Kiểm tra null
+            if (bookTitle != null) {
                 bookBorrowCounts.put(bookId, bookBorrowCounts.getOrDefault(bookId, 0) + 1);
                 bookTitles.put(bookId, bookTitle);
             }
@@ -47,7 +47,7 @@ public class StatisticController {
         for (BorrowRecord record : allRecords) {
             int userId = record.getUserId();
             String userName = record.getUserName();
-            if (userName != null) { // Kiểm tra null
+            if (userName != null) {
                 userBorrowCounts.put(userId, userBorrowCounts.getOrDefault(userId, 0) + 1);
                 userNames.put(userId, userName);
             }

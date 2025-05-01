@@ -2,6 +2,7 @@ package view;
 
 import Controller.AuthController;
 import model.User;
+
 import java.util.Scanner;
 
 public class AuthView {
@@ -79,7 +80,7 @@ public class AuthView {
                     default:
                         System.out.println("Lựa chọn không hợp lệ!");
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Đã xảy ra lỗi: " + e.getMessage());
             }
         }

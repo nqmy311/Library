@@ -45,7 +45,7 @@ public class RevenueReportView {
                 }
             } else {
                 System.out.println("Vui lòng nhập số!");
-                choice = -1; // Để vòng lặp tiếp tục
+                choice = -1;
             }
         } while (choice != 0);
     }

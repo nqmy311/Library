@@ -3,24 +3,15 @@ package Controller;
 import DAO.ViolationDAO;
 import view.ViolationView;
 import model.Violation;
-import java.sql.SQLException;
 import java.util.List;
 
 public class ViolationController {
     private final ViolationDAO violationDAO;
-    private ViolationView violationView;
+    private final ViolationView violationView;
 
     public ViolationController() {
         this.violationDAO = new ViolationDAO();
         this.violationView = new ViolationView(this);
-    }
-
-    public ViolationView getViolationView() {
-        return violationView;
-    }
-
-    public void setViolationView(ViolationView violationView) {
-        this.violationView = violationView;
     }
 
     public void viewViolationsByUserId(int userId) {

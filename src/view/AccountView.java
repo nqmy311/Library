@@ -1,7 +1,9 @@
 package view;
 
 import java.util.*;
+
 import Controller.AccountController;
+import model.TablePrinter;
 import model.User;
 
 public class AccountView {
@@ -10,7 +12,7 @@ public class AccountView {
 
     public void showAccountMenu() {
         while (true) {
-            System.out.println("==== Quản lý tài khoản ====");
+            System.out.println("==== QUẢN LÝ TÀI KHOẢN ====");
             System.out.println("1. Xem thông tin tài khoản");
             System.out.println("2. Thêm mới tài khoản");
             System.out.println("3. Tìm kiếm tài khoản");
@@ -128,31 +130,29 @@ public class AccountView {
 
     private void listUsers() {
         ArrayList<User> list = controller.listUser();
-        System.out.println("==== Danh sách tài khoản ====");
-        System.out.printf("%-5s | %-20s | %-30s | %-20s | %-15s | %-40s\n",
-                "ID", "Tên đăng nhập", "Tên chủ tài khoản", "Email", "Số điện thoại", "Địa chỉ");
-        System.out.println(
-                "-----------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%50s\n", " DANH SÁCH TÀI KHOẢN NGƯỜI DÙNG ");
+        String[] headers = {"ID", "Tên đăng nhập", "Tên chủ tài khoản", "Email", "Số điện thoại", "Địa chỉ"};
+        ArrayList<Object[]> rows = new ArrayList<>();
         for (User user : list) {
-            System.out.printf("%-5d | %-20s | %-30s | %-20s | %-15s | %-40s\n",
-                    user.getUser_Id(), user.getUsername(), user.getName(), user.getEmail(), user.getPhone(),
-                    user.getAddress());
+            rows.add(new Object[]{user.getUser_Id(), user.getUsername(), user.getName(), user.getEmail(), user.getPhone(), user.getAddress()});
         }
+        TablePrinter.printTable(headers, rows);
     }
 
     private void findUser() {
-        int id = checkIntInput("Nhập ID tài khoản cần tìm (Nếu muốn thoát vui lòng chọn số 0): ");
+        int id = checkIntInput("Nhập ID tài khoản cần tìm (Nếu muốn thoát vui lòng nhập số 0): ");
         User user = controller.findUser(id);
         if (user == null) {
             System.out.println("Không thể tìm thấy tài khoản!");
             return;
         }
-        System.out.println("==== Thông tin tài khoản ====");
+        System.out.println("======== THÔNG TIN TÀI KHOẢN ========");
         System.out.println("ID tài khoản:           " + user.getUser_Id());
         System.out.println("Tên đăng nhập:          " + user.getUsername());
         System.out.println("Tên chủ tài khoản:      " + user.getName());
         System.out.println("Email:                  " + user.getEmail());
         System.out.println("Số điện thoại:          " + user.getPhone());
         System.out.println("Địa chỉ:                " + user.getAddress());
+        System.out.println("======================================");
     }
 }

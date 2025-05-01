@@ -129,7 +129,7 @@ public class BookDAO {
 
     public ArrayList<Book> findBookByName(String name) {
         ArrayList<Book> list = new ArrayList<>();
-        String sql = "SELECT * FROM books WHERE title LIKE ?";
+        String sql = "SELECT * FROM books WHERE title LIKE ? ORDER BY book_id ASC";
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -155,20 +155,6 @@ public class BookDAO {
             System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
         return list;
-    }
-
-    public void updateBookAvailable(int bookId, int available) {
-        String sql = "UPDATE books SET available = ? WHERE book_id = ?";
-        try{
-            Connection conn = DBConnection.getConnection();
-            PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setInt(1, available);
-            statement.setInt(2, bookId);
-            statement.executeUpdate();
-        } catch (Exception e){
-            //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
-        }
     }
 
     public void decreaseBookAvailable(int bookId) {

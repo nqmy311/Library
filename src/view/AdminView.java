@@ -21,7 +21,7 @@ public class AdminView {
 
     public void showMenu(User user) {
         while (true) {
-            System.out.println("==== QUẢN LÝ THƯ VIỆN ====");
+            System.out.println("============ QUẢN LÝ THƯ VIỆN ============");
             System.out.println("1. Quản lý sách");
             System.out.println("2. Quản lý tài khoản");
             System.out.println("3. Quản lý mượn");
@@ -31,7 +31,7 @@ public class AdminView {
             System.out.println("7. Báo cáo doanh thu");
             System.out.println("8. Thống kê");
             System.out.println("0. Đăng xuất");
-            System.out.println("==========================");
+            System.out.println("==========================================");
             System.out.print("Chọn chức năng: ");
             try {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
