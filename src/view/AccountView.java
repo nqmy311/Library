@@ -74,7 +74,7 @@ public class AccountView {
 
     private String checkNameInput() {
         while (true) {
-            System.out.print("Tên chủ tài khoản: ");
+            System.out.print("Họ tên: ");
             String input = scanner.nextLine().trim();
             if (input.isEmpty()) {
                 System.out.println("Không được để trống!");
@@ -107,6 +107,55 @@ public class AccountView {
                 System.out.println("Số điện thoại chỉ được chứa số!");
                 continue;
             }
+            if (input.length() != 10) {
+                System.out.println("Số điện thoại phải có đúng 10 chữ số!");
+                continue;
+            }
+            return input;
+        }
+    }
+
+    private String checkUsernameInput() {
+        while (true) {
+            System.out.print("Username: ");
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Không được để trống!");
+            } else if (input.length() <= 6) {
+                System.out.println("Username phải lớn hơn 6 ký tự!");
+            } else {
+                return input;
+            }
+        }
+    }
+
+    private String checkPasswordInput() {
+        while (true) {
+            System.out.print("Password: ");
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Không được để trống!");
+            } else if (input.length() <= 6) {
+                System.out.println("Password phải lớn hơn 6 ký tự!");
+            } else {
+                return input;
+            }
+        }
+    }
+
+    private String checkEmailInput() {
+        while (true) {
+            System.out.print("Email: ");
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Không được để trống!");
+                continue;
+            }
+            String regex = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
+            if (!input.matches(regex)) {
+                System.out.println("Email không đúng định dạng!");
+                continue;
+            }
             return input;
         }
     }
@@ -114,10 +163,10 @@ public class AccountView {
     private void addUser() {
         User user = new User();
         System.out.println("Nhập thông tin tài khoản muốn thêm:");
-        user.setUsername(checkStrInput("Tên đăng nhập: "));
-        user.setPassword(checkStrInput("Mật khẩu: "));
+        user.setUsername(checkUsernameInput());
+        user.setPassword(checkPasswordInput());
         user.setName(checkNameInput());
-        user.setEmail(checkStrInput("Email: "));
+        user.setEmail(checkEmailInput());
         user.setPhone(checkPhoneInput());
         user.setAddress(checkStrInput("Địa chỉ: "));
         boolean success = controller.addUser(user);

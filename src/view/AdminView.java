@@ -2,6 +2,7 @@ package view;
 
 import java.util.*;
 
+import Controller.BookCommentController;
 import Controller.BorrowController;
 import Controller.ViolationController;
 import model.User;
@@ -18,6 +19,7 @@ public class AdminView {
     private final java.sql.Connection dbConnection = DBConnection.getConnection();
     private final RevenueReportView revenueReportView = new RevenueReportView(new Controller.RevenueReportController(dbConnection, new RevenueReportView(null)));
     private final StatisticsView statisticsView = new StatisticsView(new Controller.StatisticController(dbConnection, new StatisticsView(null)));
+    private final BookCommentView bookCommentView = new BookCommentView(new BookCommentController(dbConnection, new BookCommentView(null)));
 
     public void showMenu(User user) {
         while (true) {
@@ -30,6 +32,7 @@ public class AdminView {
             System.out.println("6. Quản lý vi phạm");
             System.out.println("7. Báo cáo doanh thu");
             System.out.println("8. Thống kê");
+            System.out.println("9. Xem đánh giá sách");
             System.out.println("0. Đăng xuất");
             System.out.println("==========================================");
             System.out.print("Chọn chức năng: ");
@@ -60,6 +63,8 @@ public class AdminView {
                     case 8:
                         statisticsView.showStatisticsMenu();
                         break;
+                    case 9:
+                        bookCommentView.viewBookComments();
                     case 0:
                         System.out.println("Đăng xuất ...");
                         return;

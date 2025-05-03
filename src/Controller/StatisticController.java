@@ -1,20 +1,17 @@
 package Controller;
 
 import DAO.BorrowRecordDAO;
-import model.BorrowRecord;
-import view.StatisticsView;
-
 import java.sql.Connection;
 import java.util.*;
+import model.BorrowRecord;
+import view.StatisticsView;
 
 public class StatisticController {
     private final BorrowRecordDAO borrowRecordDAO;
     private final StatisticsView statisticsView;
-    private final Connection connection;
 
     public StatisticController (Connection connection, StatisticsView statisticsView)
     {
-        this.connection = connection;
         this.borrowRecordDAO = new BorrowRecordDAO();
         this.statisticsView = statisticsView;
     }

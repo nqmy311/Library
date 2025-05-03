@@ -2,6 +2,7 @@ package view;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+
 import Controller.BookController;
 import model.Book;
 import model.TablePrinter;
@@ -12,7 +13,7 @@ public class BookView {
 
     public void showBookMenu() {
         while (true) {
-            System.out.println("==== Quản lý sách ====");
+            System.out.println("==== QUẢN LÝ SÁCH ====");
             System.out.println("1. Xem thông tin sách");
             System.out.println("2. Thêm thông tin sách");
             System.out.println("3. Sửa thông tin sách");
@@ -85,26 +86,106 @@ public class BookView {
         }
     }
 
+    private String checkNameInput() {
+        while (true) {
+            System.out.print("Tác giả: ");
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Không được để trống!");
+                continue;
+            }
+            boolean valid = true;
+            for (char c : input.toCharArray()) {
+                if (!Character.isLetter(c) && c != ' ') {
+                    valid = false;
+                    break;
+                }
+            }
+            if (!valid) {
+                System.out.println("Tên chỉ được chứa chữ cái và khoảng trắng!");
+                continue;
+            }
+            return input;
+        }
+    }
+
+    private String checkLanguageInput() {
+        while (true) {
+            System.out.print("Ngôn ngữ: ");
+            String input = scanner.nextLine().trim();
+            boolean valid = true;
+            for (char c : input.toCharArray()) {
+                if (!Character.isLetter(c) && c != ' ') {
+                    valid = false;
+                    break;
+                }
+            }
+            if (!valid) {
+                System.out.println("Ngôn ngữ chỉ được chứa chữ cái và khoảng trắng!");
+                continue;
+            }
+            return input;
+        }
+    }
+
+    private String checkPublisherInput() {
+        while (true) {
+            System.out.print("Nhà xuất bản: ");
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Không được để trống!");
+                continue;
+            }
+            if (input.matches("[\\p{L} .\\-]+")) {
+                return input;
+            } else {
+                System.out.println("Tên nhà xuất bản không hợp lệ! Chỉ cho phép chữ cái, khoảng trắng, dấu chấm và gạch nối.");
+            }
+        }
+    }
+
+    private String checkCategoryInput() {
+        while (true) {
+            System.out.print("Thể loại: ");
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Không được để trống!");
+                continue;
+            }
+            if (input.matches("[0-9]+")) {
+                System.out.println("Thể loại không hợp lệ! Không thể chỉ chứa số.");
+                continue;
+            }
+            if (input.matches("[\\p{L}0-9 .\\-]+")) {
+                if (Character.isDigit(input.charAt(0))) {
+                    System.out.println("Thể loại không hợp lệ! Không được bắt đầu bằng số.");
+                    continue;
+                }
+                return input;
+            } else {
+                System.out.println("Thể loại không hợp lệ! Chỉ cho phép chữ cái, số, khoảng trắng, dấu chấm và gạch nối.");
+            }
+        }
+    }
+
     private void addBook() {
         Book book = new Book();
         System.out.println("Nhập thông tin sách muốn thêm:");
         book.setTitle(checkStrInput("Tiêu đề sách: "));
-        book.setAuthor(checkStrInput("Tác giả: "));
-        book.setPublisher(checkStrInput("Nhà xuất bản: "));
+        book.setAuthor(checkNameInput());
+        book.setPublisher(checkPublisherInput());
         int year_published = checkIntInput("Năm xuất bản: ");
         book.setYear_published(year_published);
-        System.out.print("Thể loại: ");
-        book.setCategory(scanner.nextLine().trim());
+        book.setCategory(checkCategoryInput());
         System.out.print("Vị trí: ");
         book.setLocation(scanner.nextLine().trim());
-        System.out.print("Ngôn ngữ: ");
-        book.setLanguage(scanner.nextLine().trim());
+        book.setLanguage(checkLanguageInput());
         int quantity = checkIntInput("Số lượng sách: ");
         int available;
         do {
             available = checkIntInput("Số lượng sách có sẵn: ");
             if (available > quantity) {
-                System.out.println("Số lượng có sẵn không thể lớn hơn số lượng sách. Vui lòng nhập lại!");
+                System.out.println("Số lượng sách có sẵn không thể lớn hơn số lượng sách. Vui lòng nhập lại!");
             }
         } while (available > quantity);
         book.setQuantity(quantity);
@@ -128,7 +209,7 @@ public class BookView {
         };
         ArrayList<Object[]> rows = new ArrayList<>();
         for (Book book : list) {
-            rows.add(new Object[] {
+            rows.add(new Object[]{
                     book.getBook_Id(), book.getTitle(), book.getAuthor(),
                     book.getPublisher(), book.getYear_published(), book.getCategory(),
                     book.getLocation(), book.getLanguage(),
@@ -152,17 +233,40 @@ public class BookView {
             book.setTitle(title);
         }
 
-        System.out.print("Tác giả (" + book.getAuthor() + "): ");
-        String author = scanner.nextLine().trim();
-        if (!author.isEmpty()) {
-            book.setAuthor(author);
-        }
+        do {
+            System.out.print("Tác giả (" + book.getAuthor() + "): ");
+            String author = scanner.nextLine().trim();
+            if (author.isEmpty()) {
+                break;
+            }
+            boolean valid = true;
+            for (char c : author.toCharArray()) {
+                if (!Character.isLetter(c) && c != ' ') {
+                    valid = false;
+                    break;
+                }
+            }
+            if (!valid) {
+                System.out.println("Tên chỉ được chứa chữ cái và khoảng trắng!");
+            } else {
+                book.setAuthor(author);
+                break;
+            }
+        } while (true);
 
-        System.out.print("Nhà xuất bản (" + book.getPublisher() + "): ");
-        String publisher = scanner.nextLine().trim();
-        if (!publisher.isEmpty()) {
-            book.setPublisher(publisher);
-        }
+        do {
+            System.out.print("Nhà xuất bản (" + book.getPublisher() + "): ");
+            String publisher = scanner.nextLine().trim();
+            if (publisher.isEmpty()) {
+                break;
+            }
+            if (publisher.matches("[\\p{L} .\\-]+")) {
+                book.setPublisher(publisher);
+                break;
+            } else {
+                System.out.println("Tên nhà xuất bản không hợp lệ! Chỉ cho phép chữ cái, khoảng trắng, dấu chấm và gạch nối.");
+            }
+        } while (true);
 
         do {
             System.out.print("Năm xuất bản (" + book.getYear_published() + "): ");
@@ -183,11 +287,26 @@ public class BookView {
             }
         } while (true);
 
-        System.out.print("Thể loại (" + book.getCategory() + "): ");
-        String category = scanner.nextLine().trim();
-        if (!category.isEmpty()) {
-            book.setCategory(category);
-        }
+        do {
+            System.out.print("Thể loại (" + book.getCategory() + "): ");
+            String category = scanner.nextLine().trim();
+            if (category.isEmpty()) {
+                break;
+            }
+            if (category.matches("[0-9]+")) {
+                System.out.println("Thể loại không hợp lệ! Không thể chỉ chứa số.");
+                continue;
+            }
+            if (category.matches("[\\p{L}0-9 .\\-]+")) {
+                if (Character.isDigit(category.charAt(0))) {
+                    System.out.println("Thể loại không hợp lệ! Không được bắt đầu bằng số.");
+                    continue;
+                }
+                book.setCategory(category);
+            } else {
+                System.out.println("Thể loại không hợp lệ! Chỉ cho phép chữ cái, số, khoảng trắng, dấu chấm và gạch nối.");
+            }
+        } while (true);
 
         System.out.print("Vị trí (" + book.getLocation() + "): ");
         String location = scanner.nextLine().trim();
@@ -195,27 +314,42 @@ public class BookView {
             book.setLocation(location);
         }
 
-        System.out.print("Ngôn ngữ (" + book.getLanguage() + "): ");
-        String language = scanner.nextLine().trim();
-        if (!language.isEmpty()) {
-            book.setLanguage(language);
-        }
+        do {
+            System.out.print("Ngôn ngữ (" + book.getLanguage() + "): ");
+            String language = scanner.nextLine().trim();
+            if (language.isEmpty()) {
+                break;
+            }
+            boolean valid = true;
+            for (char c : language.toCharArray()) {
+                if (!Character.isLetter(c) && c != ' ') {
+                    valid = false;
+                    break;
+                }
+            }
+            if (!valid) {
+                System.out.println("Ngôn ngữ chỉ được chứa chữ cái và khoảng trắng!");
+            } else {
+                book.setLanguage(language);
+                break;
+            }
+        } while (true);
 
         int quantity;
         do {
-            System.out.print("Số lượng (" + book.getQuantity() + "): ");
+            System.out.print("Số lượng sách (" + book.getQuantity() + "): ");
             String quantityInput = scanner.nextLine().trim();
             if (!quantityInput.isEmpty()) {
                 try {
                     quantity = Integer.parseInt(quantityInput);
                     if (quantity <= 0) {
-                        System.out.println("Số lượng không được nhỏ hơn 0.");
+                        System.out.println("Số lượng sách không được nhỏ hơn 0.");
                         continue;
                     }
                     book.setQuantity(quantity);
                     break;
                 } catch (Exception e) {
-                    System.out.println("Số lượng không hợp lệ.");
+                    System.out.println("Số lượng sách không hợp lệ.");
                 }
             } else {
                 quantity = book.getQuantity();
@@ -225,23 +359,23 @@ public class BookView {
 
         int available;
         do {
-            System.out.print("Số lượng có sẵn (" + book.getAvailable() + "): ");
+            System.out.print("Số lượng sách có sẵn (" + book.getAvailable() + "): ");
             String availableInput = scanner.nextLine().trim();
             if (!availableInput.isEmpty()) {
                 try {
                     available = Integer.parseInt(availableInput);
                     if (available < 0) {
-                        System.out.println("Số lượng có sẵn không được nhỏ hơn 0.");
+                        System.out.println("Số lượng sách có sẵn không được nhỏ hơn 0.");
                         continue;
                     }
                     if (available > quantity) {
-                        System.out.println("Số lượng có sẵn không thể lớn hơn số lượng tổng.");
+                        System.out.println("Số lượng sách có sẵn không thể lớn hơn số lượng tổng.");
                         continue;
                     }
                     book.setAvailable(available);
                     break;
                 } catch (Exception e) {
-                    System.out.println("Số lượng có sẵn không hợp lệ.");
+                    System.out.println("Số lượng sách có sẵn không hợp lệ.");
                 }
             } else {
                 break;
@@ -257,7 +391,7 @@ public class BookView {
             try {
                 int parsedPenalty = Integer.parseInt(penalty);
                 if (parsedPenalty < 0) {
-                    System.out.println("Mức phạt không được nhỏ hơn 0. Nhập lại!");
+                    System.out.println("Mức phạt không được nhỏ hơn 0. Vui lòng nhập lại!");
                     continue;
                 }
                 book.setPenalty_rate(parsedPenalty);
@@ -312,13 +446,13 @@ public class BookView {
                 System.out.println("Không thể tìm thấy sách nào phù hợp!");
             } else {
                 System.out.printf("%75s\n", " DANH SÁCH SÁCH TÌM KIẾM ");
-                String[] headers = { "ID sách", "Tiêu đề", "Tác giả", "Nhà xuất bản", "Năm xuất bản", "Thể loại",
+                String[] headers = {"ID sách", "Tiêu đề", "Tác giả", "Nhà xuất bản", "Năm xuất bản", "Thể loại",
                         "Vị trí", "Ngôn ngữ", "Số lượng",
                         "Số lượng có sẵn", "Mức phạt"
                 };
                 ArrayList<Object[]> rows = new ArrayList<>();
                 for (Book book : list) {
-                    rows.add(new Object[] {
+                    rows.add(new Object[]{
                             book.getBook_Id(), book.getTitle(), book.getAuthor(),
                             book.getPublisher(), book.getYear_published(), book.getCategory(),
                             book.getLocation(), book.getLanguage(),

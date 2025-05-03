@@ -5,6 +5,8 @@ public class BookComment {
     private int userId;
     private int bookId;
     private String comment;
+    private String userName;
+    private String bookTitle;
 
     public BookComment() {
 
@@ -57,7 +59,26 @@ public class BookComment {
         this.comment = comment;
     }
 
-    @Override
+    public String getUserName()
+    {
+        return userName;
+    }
+
+    public String getBookTitle()
+    {
+        return bookTitle;
+    }
+
+    public void setUserName(String userName)
+    {
+        this.userName = userName;
+    }
+
+    public void setBookTitle(String bookTitle)
+    {
+        this.bookTitle = bookTitle;
+    }
+
     public String toString()
     {
         return  "Comment [ " +

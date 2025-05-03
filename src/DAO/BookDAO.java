@@ -133,7 +133,7 @@ public class BookDAO {
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, name);
+            stmt.setString(1, "%" + name + "%");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Book book = new Book();

@@ -31,7 +31,7 @@ public class ViolationView {
                     case 1:
                         int userId = checkIntInput("Nhập vào ID người dùng (Muốn thoát vui lòng nhập số 0): ");
                         if(userId == 0){
-                            System.out.println("Huỷ thao tác xem người dùng");
+                            System.out.println("Huỷ thao tác xem vi phạm của người dùng");
                             break;
                         }
                         controller.viewViolationsByUserId(userId);
@@ -88,7 +88,7 @@ public class ViolationView {
     public void displayViolations(List<Violation> violations) {
         System.out.printf("%75s\n", "DANH SÁCH VI PHẠM CỦA NGƯỜI DÙNG");
         if (violations.isEmpty()) {
-            System.out.printf("%75s\n", "Không có vi phạm nào.");
+            System.out.printf("%80s\n", "Không có vi phạm nào!");
             return;
         }
         String[] headers = {"ID vi phạm", "ID Người Dùng", "Tên Người Dùng", "ID Phiếu Mượn",
@@ -107,7 +107,7 @@ public class ViolationView {
     public void displayAllViolationsAdmin(List<Violation> violations) {
         System.out.printf("%75s\n", "DANH SÁCH TẤT CẢ VI PHẠM");
         if (violations.isEmpty()) {
-            System.out.printf("%75s\n", "Không có vi phạm nào.");
+            System.out.printf("%75s\n", "Không có vi phạm nào!");
             return;
         }
         String[] headers = {"ID vi phạm", "ID Người Dùng", "Tên Người Dùng", "ID Phiếu",

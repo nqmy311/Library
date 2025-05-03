@@ -5,15 +5,15 @@ import model.BorrowRecord;
 import model.BorrowRequest;
 import model.TablePrinter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Date;
-import java.text.SimpleDateFormat;
+
 
 public class BorrowView {
     private final BorrowController controller;
     private final Scanner scanner = new Scanner(System.in);
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
     public BorrowView(BorrowController controller) {
         this.controller = controller;
@@ -67,7 +67,7 @@ public class BorrowView {
                         break;
                     case 2:
                         int requestIdApprove = checkIntInput("Nhập ID của yêu cầu mượn cần phê duyệt (Muốn thoát vui lòng nhập số 0): ");
-                        if(requestIdApprove == 0){
+                        if (requestIdApprove == 0) {
                             System.out.println("Hủy thao tác phê duyệt sách.");
                             break;
                         }
@@ -80,7 +80,7 @@ public class BorrowView {
                         break;
                     case 3:
                         int requestIdReject = checkIntInput("Nhập ID của yêu cầu mượn cần từ chối (Muốn thoát vui lòng nhập số 0): ");
-                        if(requestIdReject == 0){
+                        if (requestIdReject == 0) {
                             break;
                         }
                         controller.rejectBorrowRequest(requestIdReject);
@@ -171,7 +171,8 @@ public class BorrowView {
                 return null;
             }
             try {
-                return dateFormatter.parse(dateString);
+                LocalDate localDate = LocalDate.parse(dateString);
+                return java.sql.Date.valueOf(localDate);
             } catch (Exception e) {
                 System.out.println("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd.");
             }
@@ -217,7 +218,7 @@ public class BorrowView {
     public void displayBorrowRecords(ArrayList<BorrowRecord> borrowRecords) {
         System.out.printf("%80s\n", "LỊCH SỬ MƯỢN TRẢ");
         if (borrowRecords.isEmpty()) {
-            System.out.printf("%80s\n", "Không có bản ghi mượn trả nào!");
+            System.out.printf("%75s\n", "Không có bản ghi mượn trả nào!");
             return;
         }
         String[] headers = {"ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "Tên Sách", "ID Sách",

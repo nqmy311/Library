@@ -3,6 +3,8 @@ import DAO.*;
 import model.BorrowRequest;
 import model.BorrowRecord;
 import view.BorrowView;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
 import model.Violation;
@@ -171,12 +173,14 @@ public class BorrowController {
         if (totalFineAmount > 0) {
             Violation violation = new Violation(record.getUserId(), record.getRecord_id(), returnDate, violationReason.toString(), totalFineAmount);
             if (violationDAO.createViolation(violation)) {
-                borrowView.displayMessage("Đã ghi nhận vi phạm: " + violationReason + ". Tiền phạt: " + totalFineAmount + " đồng.");
+                borrowView.displayMessage("Đã ghi nhận vi phạm: " + violationReason + ". Tiền phạt: " + String.format("%.2f", totalFineAmount) + " đồng.");
             } else {
                 borrowView.displayMessage("Không thể ghi nhận vi phạm.");
             }
         } else {
-            borrowView.displayMessage("Phiếu mượn số " + recordId + " đã được đánh dấu là đã trả vào ngày: " + returnDate + ".");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            String formattedDate = sdf.format(returnDate);
+            borrowView.displayMessage("Phiếu mượn số " + recordId + " đã được đánh dấu là đã trả vào ngày: " + formattedDate + ".");
         }
     }
 

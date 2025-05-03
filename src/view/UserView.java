@@ -1,7 +1,6 @@
 package view;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -21,12 +20,11 @@ public class UserView {
     private final BookController bookController = new BookController();
     private final BorrowController borrowController = new BorrowController();
     private final ViolationController violationcontroller = new ViolationController();
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
     private final java.sql.Connection dbConnection = DBConnection.getConnection();
     private final BookCommentView bookCommentView = new BookCommentView(new BookCommentController(dbConnection, new BookCommentView(null)));
 
     public void showMenu(User user) {
-        while (true){
+        while (true) {
             System.out.println("======== GIAO DIỆN NGƯỜI DÙNG THƯ VIỆN ========");
             System.out.println("1. Xem thông tin tài khoản cá nhân");
             System.out.println("2. Xem thông tin sách");
@@ -40,7 +38,7 @@ public class UserView {
             System.out.println("0. Đăng xuất");
             System.out.println("===============================================");
             System.out.print("Chọn chức năng: ");
-            try{
+            try {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
                 switch (choice) {
                     case 1:
@@ -78,7 +76,7 @@ public class UserView {
                         System.out.println("Lựa chọn không hợp lệ! Hãy chọn lại.");
                         break;
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Vui lòng nhập số hợp lệ!");
             }
         }
@@ -92,6 +90,7 @@ public class UserView {
         System.out.println("Email:                  " + user.getEmail());
         System.out.println("Số điện thoại:          " + user.getPhone());
         System.out.println("Địa chỉ:                " + user.getAddress());
+        System.out.println("=====================================");
     }
 
     private void listBooks() {
@@ -104,7 +103,7 @@ public class UserView {
         };
         ArrayList<Object[]> rows = new ArrayList<>();
         for (Book book : list) {
-            rows.add(new Object[] {
+            rows.add(new Object[]{
                     book.getBook_Id(), book.getTitle(), book.getAuthor(),
                     book.getPublisher(), book.getYear_published(), book.getCategory(),
                     book.getLocation(), book.getLanguage(),
@@ -136,13 +135,11 @@ public class UserView {
             System.out.println("Số lượng có sẵn:  " + book.getAvailable());
             System.out.println("Mức phạt:         " + book.getPenalty_rate() + " VND");
             System.out.println("=========================================");
-        }
-        else {
+        } else {
             ArrayList<Book> list = bookController.findBookByName(keyword);
-            if(list.isEmpty()){
+            if (list.isEmpty()) {
                 System.out.println("Không tìm thấy sách nào phù hợp!");
-            }
-            else {
+            } else {
                 System.out.printf("%75s\n", "DANH SÁCH SÁCH TÌM KIẾM");
                 String[] headers = {"ID sách", "Tiêu đề", "Tác giả", "Nhà xuất bản", "Năm xuất bản", "Thể loại",
                         "Vị trí", "Ngôn ngữ", "Số lượng",
@@ -176,14 +173,15 @@ public class UserView {
         }
         Date requestDate = null;
         while (requestDate == null) {
-            String dateString = checkStrInput("Nhập ngày mượn (yyyy-MM-dd) (Nhập 0 để thoát): ");
+            String dateString = checkStrInput("Nhập ngày gửi yêu cầu mượn (yyyy-MM-dd) (Nhập 0 để thoát): ");
             if (dateString.equals("0")) {
                 System.out.println("Hủy yêu cầu mượn sách.");
                 return;
             }
             try {
-                requestDate = dateFormatter.parse(dateString);
-            } catch (ParseException e) {
+                LocalDate localDate = LocalDate.parse(dateString);
+                requestDate = java.sql.Date.valueOf(localDate);
+            } catch (Exception e) {
                 System.out.println("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd.");
             }
         }

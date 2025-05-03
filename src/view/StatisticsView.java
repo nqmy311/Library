@@ -2,6 +2,7 @@ package view;
 
 import Controller.StatisticController;
 import java.util.*;
+import model.TablePrinter;
 
 public class StatisticsView {
     private final Scanner scanner = new Scanner(System.in);
@@ -44,47 +45,41 @@ public class StatisticsView {
         }
     }
 
-    public void displayMostBorrowedBooks(List<Map.Entry<Integer, Integer>> sortedBooks, Map<Integer, String> bookTitles)
-    {
+    public void displayMostBorrowedBooks(List<Map.Entry<Integer, Integer>> sortedBooks, Map<Integer, String> bookTitles) {
         System.out.println("--- Thống kê sách được mượn nhiều nhất ---");
-        if (sortedBooks.isEmpty())
-        {
+        if (sortedBooks.isEmpty()) {
             System.out.println("Không có thông tin mượn sách!");
-        }
-        else
-        {
+        } else {
+            String[] headers = {"STT", "ID Sách", "Tên Sách", "Số lần mượn"};
+            ArrayList<Object[]> rows = new ArrayList<>();
             int count = 1;
-            for (Map.Entry<Integer, Integer> entry : sortedBooks)
-            {
+            for (Map.Entry<Integer, Integer> entry : sortedBooks) {
                 int bookId = entry.getKey();
                 int borrowCount = entry.getValue();
                 String bookTitle = bookTitles.get(bookId);
-                System.out.println(count + ". Sách: \"" + bookTitle + "\" (ID: " + bookId + ") - Số lần mượn: " + borrowCount);
-                count++;
+                rows.add(new Object[]{count++, bookId, bookTitle, borrowCount});
             }
+            TablePrinter.printTable(headers, rows);
         }
-        System.out.println("-------------------------------------");
+        System.out.println("-----------------------------------------");
     }
 
-    public void displayMostBorrowingUsers(List<Map.Entry<Integer, Integer>> sortedUsers, Map<Integer, String> userNames)
-    {
+    public void displayMostBorrowingUsers(List<Map.Entry<Integer, Integer>> sortedUsers, Map<Integer, String> userNames) {
         System.out.println("--- Thống kê người mượn sách nhiều nhất ---");
-        if(sortedUsers.isEmpty())
-        {
+        if (sortedUsers.isEmpty()) {
             System.out.println("Không có thông tin mượn sách");
-        }
-        else
-        {
+        } else {
+            String[] headers = {"STT", "ID Người dùng", "Tên người dùng", "Số sách đã mượn"};
+            ArrayList<Object[]> rows = new ArrayList<>();
             int count = 1;
-            for (Map.Entry<Integer, Integer> entry : sortedUsers)
-            {
+            for (Map.Entry<Integer, Integer> entry : sortedUsers) {
                 int userId = entry.getKey();
                 int borrowCount = entry.getValue();
                 String userName = userNames.get(userId);
-                System.out.println(count + ". Người dùng: " + userName + " (ID: " + userId + ") - Số sách đã mượn: " + borrowCount);
-                count++;
+                rows.add(new Object[]{count++, userId, userName, borrowCount});
             }
+            TablePrinter.printTable(headers, rows);
         }
-        System.out.println("-------------------------------------");
+        System.out.println("-----------------------------------------");
     }
 }

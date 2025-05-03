@@ -2,12 +2,12 @@ package view;
 
 import Controller.BookCommentController;
 import Controller.BookController;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 import model.Book;
 import model.BookComment;
+import model.TablePrinter;
 
 public class BookCommentView {
     private final Scanner scanner = new Scanner(System.in);
@@ -16,6 +16,26 @@ public class BookCommentView {
 
     public BookCommentView(BookCommentController commentController) {
         this.commentController = commentController;
+    }
+
+    // Hiển thị danh sách sách để người dùng chọn
+    private void displayBookList() {
+        List<Book> books = bookController.listBook(); // Lấy danh sách tất cả các sách
+        if (books.isEmpty()) {
+            System.out.println("Không có sách nào trong thư viện.");
+            return;
+        }
+
+        // In bảng danh sách sách
+        String[] headers = { "ID sách", "Tiêu đề", "Tác giả", "Nhà xuất bản", "Năm xuất bản", "Thể loại" };
+        ArrayList<Object[]> rows = new ArrayList<>();
+        for (Book book : books) {
+            rows.add(new Object[] {
+                    book.getBook_Id(), book.getTitle(), book.getAuthor(),
+                    book.getPublisher(), book.getYear_published(), book.getCategory()
+            });
+        }
+        TablePrinter.printTable(headers, rows);
     }
 
     public void showBookCommentMenu(int userId) {
@@ -51,64 +71,68 @@ public class BookCommentView {
         } while (choice != 0);
     }
 
-    public void addBookComment(int userId) {
-        System.out.println("======== ĐÁNH GIÁ SÁCH ========");
-        List<Book> allBooks = bookController.listBook();
-        if (allBooks.isEmpty()) {
-            System.out.println("Không có sách nào để đánh giá!");
-            return;
-        }
-        System.out.println(" DANH SÁCH SÁCH ");
-        for (Book book : allBooks) {
-            System.out.println(book.getBook_Id() + " " + book.getTitle());
-        }
-        System.out.print("Chọn sách bạn muốn đánh giá: ");
-        String bookIdInput = scanner.nextLine().trim();
-        if (bookIdInput.matches("\\d+")) {
-            int bookId = Integer.parseInt(bookIdInput);
-            Book selectedBook = bookController.findBookByID(bookId);
-            if (selectedBook != null) {
-                System.out.println("Nhập đánh giá: ");
-                String commentText = scanner.nextLine().trim();
-                if (!commentText.isEmpty()) {
-                    commentController.addComment(userId, bookId, commentText);
-                } else {
-                    System.out.println("Vui lòng điền nội dung đánh giá!");
-                }
-            } else {
-                System.out.println("Không tìm thấy sách có ID " + bookId);
+    private void addBookComment(int userId) {
+        // Hiển thị danh sách sách trước khi lấy ID sách
+        displayBookList();
+        while (true) {
+            System.out.print("Nhập ID sách bạn muốn đánh giá: ");
+            String bookIdInput = scanner.nextLine().trim();
+            if (bookIdInput.equals("0")) {
+                System.out.println("Quay lại...");
+                return;
             }
-        } else {
-            System.out.println("ID sách không hợp lệ!");
+
+            if (!bookIdInput.matches("\\d+")) {
+                System.out.println("ID sách không hợp lệ!");
+                continue;
+            }
+            int bookId = Integer.parseInt(bookIdInput);
+
+            Book selectedBook = bookController.findBookByID(bookId);
+            if (selectedBook == null) {
+                System.out.println("Không tìm thấy sách có ID " + bookId);
+                continue;
+            }
+
+            System.out.print("Nhập đánh giá của bạn về sách \"" + selectedBook.getTitle() + "\": ");
+            String comment = scanner.nextLine().trim();
+            if (comment.isEmpty()) {
+                System.out.println("Đánh giá không được để trống!");
+                continue;
+            }
+
+            commentController.addComment(userId, bookId, comment);
+            return;
         }
     }
 
     public void viewBookComments() {
-        System.out.println("======== XEM ĐÁNH GIÁ SÁCH ========");
-        List<Book> allBooks = bookController.listBook();
-        if (allBooks.isEmpty()) {
-            System.out.println("Không có sách nào để xem đánh giá!");
-            return;
-        }
-        System.out.println("--- Danh sách sách ---");
-        for (Book book : allBooks) {
-            System.out.println(book.getBook_Id() + " " + book.getTitle());
-        }
-        System.out.print("Chọn sách bạn muốn xem đánh giá: ");
-        String bookIdInput = scanner.nextLine().trim();
-        if (bookIdInput.matches("\\d+")) {
+        // Hiển thị danh sách sách trước khi lấy ID sách
+        displayBookList();
+        while (true) {
+            System.out.print("Nhập ID sách bạn muốn xem đánh giá: ");
+            String bookIdInput = scanner.nextLine().trim();
+            if (bookIdInput.equals("0")) {
+                System.out.println("Quay lại...");
+                return;
+            }
+            if (!bookIdInput.matches("\\d+")) {
+                System.out.println("ID sách phải là một số nguyên!");
+                continue;
+            }
             int bookId = Integer.parseInt(bookIdInput);
+
             Book selectedBook = bookController.findBookByID(bookId);
             if (selectedBook != null) {
+                System.out
+                        .println("--- Đánh giá cho sách \"" + selectedBook.getTitle() + "\" (ID: " + bookId + ") ---");
                 commentController.viewCommentsByBook(bookId);
+                break;
             } else {
                 System.out.println("Không tìm thấy sách có ID " + bookId);
             }
-        } else {
-            System.out.println("ID sách không hơp lệ!");
         }
     }
-
 
     public void displayCommentAddedSuccesfully() {
         System.out.println("Đánh giá đã được thêm thành công!");
@@ -119,16 +143,22 @@ public class BookCommentView {
     }
 
     public void displayCommentsForBook(List<BookComment> comments) {
-        System.out.println("--- Đánh giá cho sách ---");
-        if (comments != null && !comments.isEmpty()) {
-            for (BookComment comment : comments) {
-                System.out.println("ID bình luận: " + comment.getCommentId());
-                System.out.println("ID người bình luận: " + comment.getUserId());
-                System.out.println("Bình luận: " + comment.getComment());
-                System.out.println("-------------------------------------");
-            }
+        if (comments.isEmpty()) {
+            System.out.println("Không có đánh giá nào cho sách này.");
         } else {
-            System.out.println("Không có đánh giá nào cho cuốn sách này!");
+            String[] headers = { "ID đánh giá", "ID người dùng", "Tên người dùng", "ID sách", "Tên sách", "Bình luận" };
+            ArrayList<Object[]> rows = new ArrayList<>();
+            for (BookComment comment : comments) {
+                rows.add(new Object[] {
+                        comment.getCommentId(),
+                        comment.getUserId(),
+                        comment.getUserName(),
+                        comment.getBookId(),
+                        comment.getBookTitle(),
+                        comment.getComment()
+                });
+            }
+            TablePrinter.printTable(headers, rows);
         }
     }
 

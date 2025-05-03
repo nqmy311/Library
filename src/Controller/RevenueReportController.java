@@ -29,8 +29,8 @@ public class RevenueReportController {
         }
     }
 
-    public void viewRevenueReports(LocalDate starDate, LocalDate endDate) {
-        List<RevenueReport> reports = revenueReportDAO.getReportByDateRange(starDate, endDate);
+    public void viewRevenueReports(LocalDate startDate, LocalDate endDate) {
+        List<RevenueReport> reports = revenueReportDAO.getReportByDateRange(startDate, endDate);
         if (reports.isEmpty()) {
             revenueReportView.displayNoReportsFound();
         } else {

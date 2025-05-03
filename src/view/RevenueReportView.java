@@ -1,13 +1,14 @@
 package view;
 
 import Controller.RevenueReportController;
-import model.RevenueReport;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import model.RevenueReport;
+import model.TablePrinter;
 
 public class RevenueReportView {
     private final RevenueReportController revenueReportController;
@@ -52,15 +53,8 @@ public class RevenueReportView {
 
     private void addReport() {
         System.out.println("==== THÊM BÁO CÁO DOANH THU ====");
-        System.out.print("Nhập ngày báo cáo (yyyy-MM-dd): ");
-        String reportDateStr = scanner.nextLine().trim();
-        LocalDate reportDate = null;
-        try {
-            reportDate = LocalDate.parse(reportDateStr, dateFormatter);
-        } catch (DateTimeParseException e) {
-            System.out.println("Định dạng ngày không hợp lệ. Vui lòng sử dụng yyyy-MM-dd.");
-            return;
-        }
+        LocalDate reportDate = getDateInput("Nhập ngày báo cáo (yyyy-MM-dd): ");
+        if (reportDate == null) return;
 
         System.out.print("Nhập ghi chú (tùy chọn): ");
         String notes = scanner.nextLine().trim();
@@ -70,28 +64,39 @@ public class RevenueReportView {
 
     private void getReportByDateRange() {
         System.out.println("==== XEM BÁO CÁO DOANH THU THEO KHOẢNG THỜI GIAN ====");
-        System.out.print("Nhập ngày bắt đầu (yyyy-MM-dd): ");
-        String startDateStr = scanner.nextLine().trim();
-        LocalDate startDate = null;
-        try {
-            startDate = LocalDate.parse(startDateStr, dateFormatter);
-        } catch (DateTimeParseException e) {
-            System.out.println("Định dạng ngày bắt đầu không hợp lệ. Vui lòng sử dụng yyyy-MM-dd.");
-            return;
-        }
+        LocalDate startDate = getDateInput("Nhập ngày bắt đầu (yyyy-MM-dd): ");
+        if (startDate == null) return;
 
-        System.out.print("Nhập ngày kết thúc (yyyy-MM-dd): ");
-        String endDateStr = scanner.nextLine().trim();
-        LocalDate endDate = null;
-        try {
-            endDate = LocalDate.parse(endDateStr, dateFormatter);
-        } catch (DateTimeParseException e) {
-            System.out.println("Định dạng ngày kết thúc không hợp lệ. Vui lòng sử dụng yyyy-MM-dd.");
+        LocalDate endDate = getDateInput("Nhập ngày kết thúc (yyyy-MM-dd): ");
+        if (endDate == null) return;
+
+        if (startDate.isAfter(endDate)) {
+            System.out.println("Ngày bắt đầu phải trước ngày kết thúc!");
             return;
         }
 
         revenueReportController.viewRevenueReports(startDate, endDate);
     }
+
+    private LocalDate getDateInput(String prompt) {
+        LocalDate date = null;
+        while (date == null) {
+            System.out.print(prompt);
+            String dateStr = scanner.nextLine().trim();
+            if (dateStr.equals("0"))
+            {
+                System.out.println("Quay lại...");
+                return null;
+            }
+            try {
+                date = LocalDate.parse(dateStr, dateFormatter);
+            } catch (DateTimeParseException e) {
+                System.out.println("Định dạng ngày không hợp lệ. Vui lòng sử dụng yyyy-MM-dd.");
+            }
+        }
+        return date;
+    }
+
 
     public void displayReportGeneratedSuccessfully(RevenueReport report) {
         System.out.println("Báo cáo doanh thu đã được tạo thành công:");
@@ -103,19 +108,20 @@ public class RevenueReportView {
     }
 
     public void displayRevenueReports(List<RevenueReport> reports) {
-        System.out.println("--- Danh sách báo cáo doanh thu ---");
         if (reports.isEmpty()) {
             System.out.println("Không có báo cáo nào trong khoảng thời gian này!");
         } else {
+            String[] headers = { "ID báo cáo", "Ngày báo cáo", "Tổng tiền phạt", "Ghi chú" };
+            ArrayList<Object[]> rows = new ArrayList<>();
             for (RevenueReport report : reports) {
-                System.out.println("ID: " + report.getReportId());
-                System.out.println("Ngày báo cáo: " + report.getReportDate());
-                System.out.println("Tổng tiền phạt thu được: " + report.getTotalFinesCollected());
-                if (report.getNotes() != null && !report.getNotes().isEmpty()) {
-                    System.out.println("Ghi chú: " + report.getNotes());
-                }
-                System.out.println("-----------------------------------");
+                rows.add(new Object[] {
+                        report.getReportId(),
+                        report.getReportDate(),
+                        report.getTotalFinesCollected(),
+                        report.getNotes()
+                });
             }
+            TablePrinter.printTable(headers, rows);
         }
     }
 

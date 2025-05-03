@@ -13,19 +13,42 @@ public class RevenueReportDAO {
         this.connection = connection;
     }
 
-    /*Thêm báo cáo doanh thu */
+    /* Thêm báo cáo doanh thu */
     public boolean addReport(RevenueReport report) {
-        String sql = "INSERT INTO revenue_reports (report_date, total_fines_collected, notes) VALUES (?, ?, ?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setObject(1, report.getReportDate());
-            preparedStatement.setBigDecimal(2, report.getTotalFinesCollected());
-            preparedStatement.setString(3, report.getNotes());
-            return preparedStatement.executeUpdate() > 0;
+        String selectSQL = "SELECT report_id, total_fines_collected FROM revenue_reports WHERE report_date = ?";
+        String updateSQL = "UPDATE revenue_reports SET total_fines_collected = ?, notes = ? WHERE report_date = ?";
+        String insertSQL = "INSERT INTO revenue_reports (report_date, total_fines_collected, notes) VALUES (?, ?, ?)";
+
+        try (PreparedStatement selectStmt = connection.prepareStatement(selectSQL);
+             PreparedStatement updateStmt = connection.prepareStatement(updateSQL);
+             PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
+
+            selectStmt.setDate(1, java.sql.Date.valueOf(report.getReportDate()));
+            ResultSet rs = selectStmt.executeQuery();
+
+            if (rs.next()) {
+                // Nếu báo cáo cho ngày này đã tồn tại, cập nhật tổng tiền phạt và ghi chú
+                java.math.BigDecimal existingFines = rs.getBigDecimal("total_fines_collected");
+                java.math.BigDecimal newFines = report.getTotalFinesCollected();
+                //Cộng dồn tiền phạt hoặc thay thế hoàn toàn tùy theo yêu cầu
+                java.math.BigDecimal totalFines = newFines; // Để thay thế hoàn toàn
+                //BigDecimal totalFines = existingFines.add(newFines); // Để cộng dồn
+
+                updateStmt.setBigDecimal(1, totalFines);
+                updateStmt.setString(2, report.getNotes());
+                updateStmt.setDate(3, java.sql.Date.valueOf(report.getReportDate()));
+                return updateStmt.executeUpdate() > 0;
+            } else {
+                // Nếu không tồn tại, thêm mới báo cáo
+                insertStmt.setDate(1, java.sql.Date.valueOf(report.getReportDate()));
+                insertStmt.setBigDecimal(2, report.getTotalFinesCollected());
+                insertStmt.setString(3, report.getNotes());
+                return insertStmt.executeUpdate() > 0;
+            }
         } catch (SQLException e) {
-            //e.printStackTrace();
             System.out.println("Đã xảy ra lỗi: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
     /*lấy report theo khoảng ngày*/

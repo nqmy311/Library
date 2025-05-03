@@ -63,8 +63,7 @@ public class RevenueReport {
     public String toString()
     {
         return  "RevenueReport [ " +
-                "reportId = " + reportId +
-                ", reportDate = " + reportDate +
+                "reportDate = " + reportDate +
                 ", notes = '" + notes + "'" +
                 " ]";
     }
