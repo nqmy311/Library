@@ -151,7 +151,7 @@ public class AccountView {
                 System.out.println("Không được để trống!");
                 continue;
             }
-            String regex = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
+            String regex = "^[A-Za-z0-9]+[A-Za-z0-9+_.-]*@[A-Za-z0-9]+.$";
             if (!input.matches(regex)) {
                 System.out.println("Email không đúng định dạng!");
                 continue;

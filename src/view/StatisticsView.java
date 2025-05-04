@@ -46,7 +46,7 @@ public class StatisticsView {
     }
 
     public void displayMostBorrowedBooks(List<Map.Entry<Integer, Integer>> sortedBooks, Map<Integer, String> bookTitles) {
-        System.out.println("--- Thống kê sách được mượn nhiều nhất ---");
+        System.out.println("======== THỐNG KÊ SÁCH ĐƯỢC MƯỢN NHIỀU NHẤT ========");
         if (sortedBooks.isEmpty()) {
             System.out.println("Không có thông tin mượn sách!");
         } else {
@@ -61,11 +61,10 @@ public class StatisticsView {
             }
             TablePrinter.printTable(headers, rows);
         }
-        System.out.println("-----------------------------------------");
     }
 
     public void displayMostBorrowingUsers(List<Map.Entry<Integer, Integer>> sortedUsers, Map<Integer, String> userNames) {
-        System.out.println("--- Thống kê người mượn sách nhiều nhất ---");
+        System.out.println("======== THỐNG KÊ NGƯỜI DÙNG MƯỢN SÁCH NHIỀU NHẤT ========");
         if (sortedUsers.isEmpty()) {
             System.out.println("Không có thông tin mượn sách");
         } else {
@@ -80,6 +79,5 @@ public class StatisticsView {
             }
             TablePrinter.printTable(headers, rows);
         }
-        System.out.println("-----------------------------------------");
     }
 }

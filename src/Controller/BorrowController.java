@@ -191,7 +191,6 @@ public class BorrowController {
         }
     }
 
-
     private long handleLateReturn(BorrowRecord record) {
         long overDueMs = record.getReturnDate().getTime() - record.getDueDate().getTime();
         long overDueDays = overDueMs / (24 * 60 * 60 * 1000);

@@ -65,6 +65,7 @@ public class AdminView {
                         break;
                     case 9:
                         bookCommentView.viewBookComments();
+                        break;
                     case 0:
                         System.out.println("Đăng xuất ...");
                         return;
