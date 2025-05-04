@@ -123,7 +123,7 @@ public class AuthView {
         if (success) {
             System.out.println("Đăng ký thành công!");
         } else {
-            System.out.println("Thất bại. Username có thể đã tồn tại.");
+            System.out.println("Thất bại. Username hoặc Email có thể đã tồn tại.");
         }
     }
 
@@ -134,7 +134,7 @@ public class AuthView {
         String password = scanner.nextLine().trim();
         User user = controller.login(username, password);
         if (user != null) {
-            System.out.println("Chào " + user.getName() + ", bạn đã đăng nhập thành công!");
+            System.out.println("Xin chào " + user.getName() + ", bạn đã đăng nhập thành công!");
             if (user.getRole().equals("admin")) {
                 adminView.showMenu(user);
             } else {

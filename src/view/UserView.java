@@ -54,14 +54,20 @@ public class UserView {
                         borrowController.viewBorrowRecords(user.getUser_Id());
                         break;
                     case 5:
+                        System.out.println("LƯU Ý: Trả muộn sách sẽ bị phạt 10.000đ/ngày. Sách bị hỏng hoặc mất sẽ bị xử phạt theo giá trị quy định đối với từng loại sách.");
                         requestBorrowBook(user.getUser_Id());
                         break;
                     case 6:
                         borrowController.viewBorrowRequests(user.getUser_Id());
                         break;
                     case 7:
+                        System.out.println("======== GỬI YÊU CẦU TRẢ SÁCH ========");
                         int recordIdReturn = checkIntInput("Nhập phiếu mượn muốn trả (Muốn thoát vui lòng nhập số 0): ");
-                        borrowController.requestReturnBook(recordIdReturn);
+                        if(recordIdReturn == 0){
+                            System.out.println("Huỷ thao tác yêu cầu trả sách.");
+                            break;
+                        }
+                        borrowController.requestReturnBook(recordIdReturn, user.getUser_Id());
                         break;
                     case 8:
                         bookCommentView.showBookCommentMenu(user.getUser_Id());

@@ -136,10 +136,10 @@ public class BookView {
                 System.out.println("Không được để trống!");
                 continue;
             }
-            if (input.matches("[\\p{L} .\\-]+")) {
+            if (input.matches("[\\p{L} .\\-&]+")) {
                 return input;
             } else {
-                System.out.println("Tên nhà xuất bản không hợp lệ! Chỉ cho phép chữ cái, khoảng trắng, dấu chấm và gạch nối.");
+                System.out.println("Tên nhà xuất bản không hợp lệ! Chỉ cho phép chữ cái, khoảng trắng, dấu chấm, gạch nối và &.");
             }
         }
     }
@@ -260,11 +260,11 @@ public class BookView {
             if (publisher.isEmpty()) {
                 break;
             }
-            if (publisher.matches("[\\p{L} .\\-]+")) {
+            if (publisher.matches("[\\p{L} .\\-&]+")) {
                 book.setPublisher(publisher);
                 break;
             } else {
-                System.out.println("Tên nhà xuất bản không hợp lệ! Chỉ cho phép chữ cái, khoảng trắng, dấu chấm và gạch nối.");
+                System.out.println("Tên nhà xuất bản không hợp lệ! Chỉ cho phép chữ cái, khoảng trắng, dấu chấm, gạch nối và &.");
             }
         } while (true);
 

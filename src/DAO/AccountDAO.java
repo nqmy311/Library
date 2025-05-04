@@ -21,6 +21,7 @@ public class AccountDAO {
                 user.setEmail(rs.getString("email"));
                 user.setPhone(rs.getString("phone"));
                 user.setAddress(rs.getString("address"));
+                user.setRole(rs.getString("role"));
                 list.add(user);
             }
         } catch (Exception e) {

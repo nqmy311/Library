@@ -98,8 +98,7 @@ public class BorrowRecordDAO {
         String sql = "SELECT br.record_id, br.user_id, u.name AS user_name, br.book_id, b.title AS book_title, br.borrow_date, br.due_date, br.return_date, br.status, br.book_condition " +
                 "FROM borrow_records br " +
                 "JOIN users u ON br.user_id = u.user_id " +
-                "JOIN books b ON br.book_id = b.book_id " +
-                "ORDER BY br.record_id ASC";
+                "JOIN books b ON br.book_id = b.book_id";
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);

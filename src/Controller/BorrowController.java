@@ -112,13 +112,17 @@ public class BorrowController {
         borrowView.displayReturnRequests(requests);
     }
 
-    public void requestReturnBook(int recordId){
+    public void requestReturnBook(int recordId, int userId) {
         BorrowRecord record = borrowRecordDAO.getBorrowRecordById(recordId);
-        if(record != null && record.getStatus().equals("Đang được mượn")){
-            if(borrowRecordDAO.updateBorrowRecordStatus(recordId, "Yêu cầu trả")){
-                borrowView.displayMessage("Đã gửi yêu cầu trả sách cho phiếu mượn số " + recordId + ". Vui lòng chờ xác nhận từ admin.");
+        if (record != null && record.getStatus().equals("Đang được mượn")) {
+            if (record.getUserId() == userId) {
+                if (borrowRecordDAO.updateBorrowRecordStatus(recordId, "Yêu cầu trả")) {
+                    borrowView.displayMessage("Đã gửi yêu cầu trả sách cho phiếu mượn số " + recordId + ". Vui lòng chờ xác nhận từ admin.");
+                } else {
+                    borrowView.displayMessage("Lỗi: Không thể cập nhật trạng thái phiếu mượn.");
+                }
             } else {
-                borrowView.displayMessage("Lỗi: Không thể cập nhật trạng thái phiếu mượn.");
+                borrowView.displayMessage("Bạn không có quyền gửi yêu cầu trả sách cho phiếu mượn này.");
             }
         } else {
             borrowView.displayMessage("Không thể gửi yêu cầu trả sách cho phiếu mượn số " + recordId + " hoặc phiếu mượn không ở trạng thái 'Đang được mượn'.");
@@ -151,9 +155,12 @@ public class BorrowController {
         double totalFineAmount = 0;
         StringBuilder violationReason = new StringBuilder();
         if (newStatus.equals("Trả muộn")) {
-            double lateReturnFine = handleLateReturn(record);
+            long overdueDays = handleLateReturn(record);
+            double lateReturnFine = overdueDays * 10000;
             totalFineAmount += lateReturnFine;
-            violationReason.append("Trả muộn");
+            violationReason.append("Trả muộn ");
+            violationReason.append(overdueDays);
+            violationReason.append(" ngày");
         }
         String bookCondition = borrowView.getBookConditionInput();
         if (!borrowRecordDAO.updateBorrowRecordBookCondition(recordId, bookCondition)) {
@@ -185,13 +192,10 @@ public class BorrowController {
     }
 
 
-    private double handleLateReturn(BorrowRecord record) {
+    private long handleLateReturn(BorrowRecord record) {
         long overDueMs = record.getReturnDate().getTime() - record.getDueDate().getTime();
         long overDueDays = overDueMs / (24 * 60 * 60 * 1000);
-        if (overDueDays > 0) {
-            return overDueDays * 10000;
-        }
-        return 0;
+        return Math.max(overDueDays, 0);
     }
 
     private double handleDamagedOrLostBook(BorrowRecord record, String condition) {

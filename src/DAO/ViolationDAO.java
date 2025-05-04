@@ -56,66 +56,6 @@ public class ViolationDAO {
         return null;
     }
 
-    public ArrayList<Violation> getViolationsByUserId(int userId) {
-        ArrayList<Violation> violations = new ArrayList<>();
-        String sql = "SELECT v.*, u.name AS user_name " +
-                "FROM violations v " +
-                "JOIN users u ON v.user_id = u.user_id " +
-                "WHERE v.user_id = ?";
-        try {
-            Connection conn = DBConnection.getConnection();
-            PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Violation violation = new Violation();
-                violation.setViolationId(resultSet.getInt("violation_id"));
-                violation.setUserId(resultSet.getInt("user_id"));
-                violation.setRecordId(resultSet.getInt("record_id"));
-                violation.setViolationDate(resultSet.getDate("violation_date"));
-                violation.setReason(resultSet.getString("reason"));
-                violation.setFineAmount(resultSet.getDouble("fine_amount"));
-                violation.setPaid(resultSet.getBoolean("is_paid"));
-                violation.setUserName(resultSet.getString("user_name"));
-                violations.add(violation);
-            }
-        } catch (Exception e){
-            //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
-        }
-        return violations;
-    }
-
-    public ArrayList<Violation> getViolationsByRecordId(int recordId) {
-        ArrayList<Violation> violations = new ArrayList<>();
-        String sql = "SELECT v.*, u.name AS user_name " +
-                "FROM violations v " +
-                "JOIN users u ON v.user_id = u.user_id " +
-                "WHERE v.record_id = ?";
-        try {
-            Connection conn = DBConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, recordId);
-            ResultSet resultSet = stmt.executeQuery();
-            while (resultSet.next()) {
-                Violation violation = new Violation();
-                violation.setViolationId(resultSet.getInt("violation_id"));
-                violation.setUserId(resultSet.getInt("user_id"));
-                violation.setRecordId(resultSet.getInt("record_id"));
-                violation.setViolationDate(resultSet.getDate("violation_date"));
-                violation.setReason(resultSet.getString("reason"));
-                violation.setFineAmount(resultSet.getDouble("fine_amount"));
-                violation.setPaid(resultSet.getBoolean("is_paid"));
-                violation.setUserName(resultSet.getString("user_name"));
-                violations.add(violation);
-            }
-        } catch (Exception e){
-            //e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi: " + e.getMessage());
-        }
-        return violations;
-    }
-
     public ArrayList<Violation> getAllViolations() {
         ArrayList<Violation> violations = new ArrayList<>();
         String sql = "SELECT v.*, u.name AS user_name " +
@@ -144,25 +84,34 @@ public class ViolationDAO {
         return violations;
     }
 
-
-    public boolean updateViolation(Violation violation) {
-        String sql = "UPDATE violations SET user_id = ?, record_id = ?, violation_date = ?, reason = ?, fine_amount = ?, is_paid = ? WHERE violation_id = ?";
+    public ArrayList<Violation> getViolationsByUserId(int userId) {
+        ArrayList<Violation> violations = new ArrayList<>();
+        String sql = "SELECT v.*, u.name AS user_name " +
+                "FROM violations v " +
+                "JOIN users u ON v.user_id = u.user_id " +
+                "WHERE v.user_id = ?";
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setInt(1, violation.getUserId());
-            statement.setInt(2, violation.getRecordId());
-            statement.setDate(3, new java.sql.Date(violation.getViolationDate().getTime()));
-            statement.setString(4, violation.getReason());
-            statement.setDouble(5, violation.getFineAmount());
-            statement.setBoolean(6, violation.isPaid());
-            statement.setInt(7, violation.getViolationId());
-            return statement.executeUpdate() > 0;
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Violation violation = new Violation();
+                violation.setViolationId(resultSet.getInt("violation_id"));
+                violation.setUserId(resultSet.getInt("user_id"));
+                violation.setRecordId(resultSet.getInt("record_id"));
+                violation.setViolationDate(resultSet.getDate("violation_date"));
+                violation.setReason(resultSet.getString("reason"));
+                violation.setFineAmount(resultSet.getDouble("fine_amount"));
+                violation.setPaid(resultSet.getBoolean("is_paid"));
+                violation.setUserName(resultSet.getString("user_name"));
+                violations.add(violation);
+            }
         } catch (Exception e){
             //e.printStackTrace();
             System.out.println("Đã xảy ra lỗi: " + e.getMessage());
         }
-        return false;
+        return violations;
     }
 
     public void markViolationAsPaid(int violationId) {

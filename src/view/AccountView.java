@@ -180,10 +180,10 @@ public class AccountView {
     private void listUsers() {
         ArrayList<User> list = controller.listUser();
         System.out.printf("%50s\n", " DANH SÁCH TÀI KHOẢN NGƯỜI DÙNG ");
-        String[] headers = {"ID", "Tên đăng nhập", "Tên chủ tài khoản", "Email", "Số điện thoại", "Địa chỉ"};
+        String[] headers = {"ID", "Tên đăng nhập", "Tên chủ tài khoản", "Email", "Số điện thoại", "Địa chỉ", "Vai trò"};
         ArrayList<Object[]> rows = new ArrayList<>();
         for (User user : list) {
-            rows.add(new Object[]{user.getUser_Id(), user.getUsername(), user.getName(), user.getEmail(), user.getPhone(), user.getAddress()});
+            rows.add(new Object[]{user.getUser_Id(), user.getUsername(), user.getName(), user.getEmail(), user.getPhone(), user.getAddress(), user.getRole()});
         }
         TablePrinter.printTable(headers, rows);
     }

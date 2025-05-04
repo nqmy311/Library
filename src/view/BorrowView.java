@@ -180,9 +180,9 @@ public class BorrowView {
     }
 
     public void displayReturnRequests(ArrayList<BorrowRecord> borrowRecords) {
-        System.out.printf("%60s\n", "DANH SÁCH YÊU CẦU TRẢ");
+        System.out.printf("%80s\n", "DANH SÁCH YÊU CẦU TRẢ");
         if (borrowRecords.isEmpty()) {
-            System.out.printf("%60s\n", "Không có yêu cầu trả nào!");
+            System.out.printf("%82s\n", "Không có yêu cầu trả nào!");
             return;
         }
         String[] headers = {"ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "ID Sách", "Tên Sách", "Ngày mượn", "Ngày đến hạn", "Trạng thái"};
@@ -200,7 +200,7 @@ public class BorrowView {
     public void displayBorrowRequests(ArrayList<BorrowRequest> borrowRequests) {
         System.out.printf("%60s\n", " DANH SÁCH CÁC YÊU CẦU MƯỢN SÁCH ");
         if (borrowRequests.isEmpty()) {
-            System.out.printf("%60s\n", " Không có yêu cầu mượn nào! ");
+            System.out.printf("%57s\n", " Không có yêu cầu mượn nào! ");
             return;
         }
         String[] headers = {"ID Yêu cầu", "ID Tài khoản", "Tên Người Dùng", "ID Sách", "Tên Sách", "Ngày yêu cầu mượn", "Trạng thái"};
@@ -218,16 +218,16 @@ public class BorrowView {
     public void displayBorrowRecords(ArrayList<BorrowRecord> borrowRecords) {
         System.out.printf("%80s\n", "LỊCH SỬ MƯỢN TRẢ");
         if (borrowRecords.isEmpty()) {
-            System.out.printf("%75s\n", "Không có bản ghi mượn trả nào!");
+            System.out.printf("%85s\n", "Không có bản ghi mượn trả nào!");
             return;
         }
-        String[] headers = {"ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "Tên Sách", "ID Sách",
+        String[] headers = {"ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "ID Sách", "Tên Sách",
                 "Ngày mượn", "Ngày trả", "Ngày đến hạn", "Trạng thái", "Tình trạng sách"
         };
         ArrayList<Object[]> rows = new ArrayList<>();
         for (BorrowRecord record : borrowRecords) {
             rows.add(new Object[]{
-                    record.getRecord_id(), record.getUserId(), record.getUserName(), record.getBookTitle(), record.getBookId(),
+                    record.getRecord_id(), record.getUserId(), record.getUserName(), record.getBookId(), record.getBookTitle(),
                     record.getBorrowDate(), record.getReturnDate() != null ? record.getReturnDate() : "Chưa trả",
                     record.getDueDate(), record.getStatus(), record.getBook_condition()
             });
@@ -238,7 +238,7 @@ public class BorrowView {
     public void displayAllBorrowRequests(ArrayList<BorrowRequest> borrowRequests) {
         System.out.printf("%80s\n", "DANH SÁCH TẤT CẢ YÊU CẦU MƯỢN SÁCH");
         if (borrowRequests.isEmpty()) {
-            System.out.printf("%80s\n", "Không có yêu cầu mượn nào!");
+            System.out.printf("%75s\n", "Không có yêu cầu mượn nào!");
             return;
         }
         String[] headers = {"ID Yêu cầu", "ID Tài khoản", "Tên Người Dùng", "ID Sách", "Tên Sách", "Ngày yêu cầu mượn", "Trạng thái"};
@@ -256,17 +256,17 @@ public class BorrowView {
     public void displayAllBorrowRecords(ArrayList<BorrowRecord> borrowRecords) {
         System.out.printf("%80s\n", "DANH SÁCH TẤT CẢ PHIẾU MƯỢN SÁCH");
         if (borrowRecords.isEmpty()) {
-            System.out.printf("80s\n", "Không có phiếu mượn nào!");
+            System.out.printf("%75s\n", "Không có phiếu mượn nào!");
             return;
         }
-        String[] headers = {"ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "Tên Sách", "ID Sách",
+        String[] headers = {"ID Phiếu", "ID Người Dùng", "Tên Người Dùng", "ID Sách", "Tên Sách",
                 "Ngày mượn", "Ngày trả", "Ngày đến hạn", "Trạng thái", "Tình trạng sách"
         };
         ArrayList<Object[]> rows = new ArrayList<>();
         for (BorrowRecord record : borrowRecords) {
             rows.add(new Object[]{
-                    record.getRecord_id(), record.getUserId(), record.getUserName(), record.getBookTitle(),
-                    record.getBookId(), record.getBorrowDate(), record.getReturnDate() != null ? record.getReturnDate() : "Chưa trả",
+                    record.getRecord_id(), record.getUserId(), record.getUserName(), record.getBookId(),
+                    record.getBookTitle(), record.getBorrowDate(), record.getReturnDate() != null ? record.getReturnDate() : "Chưa trả",
                     record.getDueDate(), record.getStatus(), record.getBook_condition()
             });
         }
